@@ -7,6 +7,26 @@ import ResumeForm from "../components/ResumeForm";
 import ResumePreview from "../components/ResumePreview";
 import { IoSparkles, IoWalletOutline, IoClose, IoCopyOutline } from "react-icons/io5";
 
+// Helper to ensure each array item has a unique id
+function ensureItemIds(data) {
+  if (!data) return data;
+  const sections = ["experience", "education", "projects", "skills"];
+  const updated = { ...data };
+  sections.forEach(sec => {
+    if (Array.isArray(updated[sec])) {
+      updated[sec] = updated[sec].map(item => {
+        if (!item.id) {
+          return { ...item, id: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 9) };
+        }
+        return item;
+      });
+    } else {
+      updated[sec] = [];
+    }
+  });
+  return updated;
+}
+
 function EditorContent() {
   const { data: session, status } = useSession();
   const searchParams = useSearchParams();
@@ -60,9 +80,10 @@ function EditorContent() {
             setHtmlContent(data.htmlContent || "");
             if (data.structuredData) {
               const parsed = JSON.parse(data.structuredData);
-              setFormData(parsed);
+              const withIds = ensureItemIds(parsed);
+              setFormData(withIds);
               if (window.updateResumeFormData) {
-                window.updateResumeFormData(parsed);
+                window.updateResumeFormData(withIds);
               }
             }
           }
@@ -119,9 +140,10 @@ function EditorContent() {
 
         // Update form details with AI improved wording
         if (data.structuredData) {
-          setFormData(data.structuredData);
+          const withIds = ensureItemIds(data.structuredData);
+          setFormData(withIds);
           if (window.updateResumeFormData) {
-            window.updateResumeFormData(data.structuredData);
+            window.updateResumeFormData(withIds);
           }
         }
 

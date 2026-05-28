@@ -22,13 +22,35 @@ export default function ResumeForm({
   loading 
 }) {
   
+  // Helper to ensure each array item has a unique id
+  const ensureItemIds = (data) => {
+    if (!data) return data;
+    const sections = ["experience", "education", "projects", "skills"];
+    const updated = { ...data };
+    sections.forEach(sec => {
+      if (Array.isArray(updated[sec])) {
+        updated[sec] = updated[sec].map(item => {
+          if (!item.id) {
+            return { ...item, id: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 9) };
+          }
+          return item;
+        });
+      } else {
+        updated[sec] = [];
+      }
+    });
+    return updated;
+  };
+
   // Local state for the dynamic resume form data
-  const [formData, setFormData] = useState(initialData || {
-    base: { name: "", role: "", phone: "", email: "", location: "", summary: "" },
-    experience: [],
-    education: [],
-    projects: [],
-    skills: []
+  const [formData, setFormData] = useState(() => {
+    return ensureItemIds(initialData) || {
+      base: { name: "", role: "", phone: "", email: "", location: "", summary: "" },
+      experience: [],
+      education: [],
+      projects: [],
+      skills: []
+    };
   });
 
   // Open/Close states for each section
@@ -111,7 +133,7 @@ export default function ResumeForm({
 
   // Helper to merge AI optimized data back into form state
   const handleAiUpdate = (newData) => {
-    setFormData(newData);
+    setFormData(ensureItemIds(newData));
   };
 
   // Expose this update helper to parent
