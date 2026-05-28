@@ -216,7 +216,7 @@ function EditorContent() {
         </div>
 
         {/* Dual panel Split View Layout */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[calc(100vh-250px)]">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left panel: accordion forms & options */}
           <div className="h-full">
             <ResumeForm

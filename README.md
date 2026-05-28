@@ -21,6 +21,8 @@ AI Resume Builder is not just another simple template — it's a production-read
 - **Tactile Sliding Pill Toggles** — Custom styled toggle switches for premium SaaS options, replacing standard unstyled check fields.
 - **Public Share Links & Downloads** — Generate shareable public links to send to recruiters, and download print-ready PDFs or editable Word files.
 
+![AI Resume Builder](https://cdn.muapi.ai/data/2/446414352420/Screenshot_2026-05-28_132613.png)
+
 ---
 
 ## ✨ Core Features
@@ -140,16 +142,12 @@ ai-resume-builder/
 │   │   │   ├── generation/     # Credits checking, deduction, MuAPI prediction triggers
 │   │   │   ├── upload/         # MuAPI CDN file upload handler
 │   │   │   └── webhook/        # Webhooks for Stripe billing and MuAPI prediction callbacks
-│   │   ├── editor/             # Dual-panel Document Workspace
 │   │   ├── gallery/            # History Creations Gallery
 │   │   ├── pricing/            # Interactive packaging checkout cards
-│   │   ├── privacy/            # Privacy Policy documentation
-│   │   ├── terms/              # Terms of Service documentation
 │   │   ├── globals.css         # Minimal light-mode styling, scrollbars
-│   │   └── layout.js           # Root layout config (Inter & Outfit fonts)
+│   │   └── layout.js           # Root layout config (Inter font)
 │   ├── components/             # Reusable UI Components
 │   │   ├── Header.js           # Sticky responsive light-mode glass navbar
-│   │   ├── Footer.js           # Minimal footer links
 │   │   ├── Providers.js        # NextAuth Session wrapper
 │   │   ├── ResumeForm.js       # Accordion inputs, custom selects, toggles
 │   │   └── ResumePreview.js    # Native print PDF and Word doc preview frame

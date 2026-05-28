@@ -145,7 +145,7 @@ export default function ResumeForm({
     <div className="flex h-full flex-col bg-white rounded border border-slate-200 shadow-sm overflow-hidden">
       
       {/* Scrollable Container */}
-      <div className="flex-1 overflow-y-auto overscroll-contain pt-4 px-4 pb-72 sm:pt-6 sm:px-6 sm:pb-80 space-y-6">
+      <div className="flex-1 overflow-y-auto pt-4 px-4 pb-4 space-y-6">
         
         {/* Step 1: Accordion Panels */}
         <div className="space-y-4">
@@ -691,7 +691,7 @@ export default function ResumeForm({
                     <span className="text-[10px] text-slate-400">▼</span>
                   </button>
                   {templateDropdownOpen && (
-                    <div className="absolute bottom-10 left-0 right-0 z-50 bg-white border border-slate-200 shadow-xl rounded py-1 max-h-56 overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="absolute bottom-10 left-0 right-0 z-50 bg-white border border-slate-200 shadow-xl rounded py-1 max-h-56 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150">
                       {TEMPLATES.map(t => (
                         <button
                           key={t.id}
@@ -766,7 +766,7 @@ export default function ResumeForm({
                       <span className="text-[10px] text-slate-400">▼</span>
                     </button>
                     {fontDropdownOpen && (
-                      <div className="absolute bottom-12 left-0 right-0 z-50 bg-white border border-slate-200 shadow-xl rounded py-1 max-h-40 overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="absolute bottom-12 left-0 right-0 z-50 bg-white border border-slate-200 shadow-xl rounded py-1 max-h-40 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150">
                         {FONTS.map(f => (
                           <button
                             key={f}
@@ -802,7 +802,7 @@ export default function ResumeForm({
                       <span className="text-[10px] text-slate-400">▼</span>
                     </button>
                     {fontSizeDropdownOpen && (
-                      <div className="absolute bottom-12 left-0 right-0 z-50 bg-white border border-slate-200 shadow-xl rounded py-1 max-h-40 overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="absolute bottom-12 left-0 right-0 z-50 bg-white border border-slate-200 shadow-xl rounded py-1 max-h-40 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150">
                         {SIZES.map(s => (
                           <button
                             key={s}
