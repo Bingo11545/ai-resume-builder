@@ -4,7 +4,7 @@
 
 ## 🌐 Try the Live Engine
 
-**Hosted Demo:** [ai-resume-builder-iota.vercel.app](https://ai-resume-builder-iota.vercel.app/)
+**Hosted Demo:** [ai-resume-builder-five-olive.vercel.app](https://ai-resume-builder-five-olive.vercel.app/)
 
 Experience the full premium light-mode, highly responsive interface. Sign in with Google to explore the AI Document Workspace, select customized readable font styles, adjust size elements, and test checkout billing pipelines directly from your browser.
 
@@ -55,7 +55,7 @@ To successfully deploy and run, populate the following environment variables in 
 | **Database**          | `DATABASE_URL`                       | PostgreSQL connection string ([Supabase](https://supabase.com) or [Neon](https://neon.tech)) |
 |                       | `DIRECT_URL`                         | Direct DB connection for Prisma migrations                                                   |
 | **NextAuth / Google** | `NEXTAUTH_SECRET`                    | Secure random string generated via `openssl rand -base64 32`                                 |
-|                       | `NEXTAUTH_URL`                       | Your production domain (e.g. `https://ai-resume-builder.vercel.app`)                         |
+|                       | `NEXTAUTH_URL`                       | Your production domain (e.g. `https://ai-resume-builder-five-olive.vercel.app`)             |
 |                       | `WEBHOOK_URL`                        | The tunnel URL or production domain for resolving MuAPI callback webhooks                     |
 |                       | `GOOGLE_CLIENT_ID`                   | Get from [Google Cloud Console](https://console.cloud.google.com/apis/credentials)           |
 |                       | `GOOGLE_CLIENT_SECRET`               | Get from [Google Cloud Console](https://console.cloud.google.com/apis/credentials)           |
@@ -72,8 +72,8 @@ To successfully deploy and run, populate the following environment variables in 
 4. **Deploy**: Hit "Deploy". Vercel will automatically run the build steps (`npm run build`).
 5. **Database Push**: Since Prisma does not automatically migrate via Vercel builds by default, you may want to append `npx prisma db push && ` to your Vercel build command, or manually run it locally pointing to your production database URL.
 6. **Integrations Setup**:
-   - Establish a **Google Cloud OAuth app**, enabling the callback URL: `https://your-app.vercel.app/api/auth/callback/google`
-   - Setup a **Stripe Webhook**, pointing to `https://your-app.vercel.app/api/webhook/stripe` and selecting the `checkout.session.completed` event to grab your webhook signing secret.
+   - Establish a **Google Cloud OAuth app**, enabling the callback URL: `https://ai-resume-builder-five-olive.vercel.app/api/auth/callback/google`
+   - Setup a **Stripe Webhook**, pointing to `https://ai-resume-builder-five-olive.vercel.app/api/webhook/stripe` and selecting the `checkout.session.completed` event to grab your webhook signing secret.
 
 ---
 
