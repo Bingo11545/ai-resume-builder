@@ -31,24 +31,23 @@ export default function ResumeForm({
     skills: []
   });
 
-  // Track which accordion panel is open
-  const [activeSection, setActiveSection] = useState("prompt");
+  // Open/Close states for each section
+  const [isPromptOpen, setIsPromptOpen] = useState(false);
+  const [isBaseOpen, setIsBaseOpen] = useState(true);
+  const [isExperienceOpen, setIsExperienceOpen] = useState(true);
+  const [isEducationOpen, setIsEducationOpen] = useState(true);
+  const [isProjectsOpen, setIsProjectsOpen] = useState(false);
+  const [isSkillsOpen, setIsSkillsOpen] = useState(true);
+  const [isStylingOpen, setIsStylingOpen] = useState(false);
 
   // Custom Dropdowns open/close states (open upwards)
   const [templateDropdownOpen, setTemplateDropdownOpen] = useState(false);
   const [fontDropdownOpen, setFontDropdownOpen] = useState(false);
   const [fontSizeDropdownOpen, setFontSizeDropdownOpen] = useState(false);
+  const [openSkillSelectId, setOpenSkillSelectId] = useState(null);
 
   // Tactile Sliding Toggle state
   const [displaySkillLevels, setDisplaySkillLevels] = useState(true);
-
-  const toggleSection = (sec) => {
-    setActiveSection(activeSection === sec ? "" : sec);
-    // Close any open dropdowns when section changes
-    setTemplateDropdownOpen(false);
-    setFontDropdownOpen(false);
-    setFontSizeDropdownOpen(false);
-  };
 
   // Base field updater
   const updateBaseField = (field, val) => {
@@ -132,7 +131,7 @@ export default function ResumeForm({
           {/* Panel 1: Your AI Instructions */}
           <div className="rounded border border-slate-200 bg-slate-50/50 overflow-hidden">
             <button
-              onClick={() => toggleSection("prompt")}
+              onClick={() => setIsPromptOpen(!isPromptOpen)}
               className="flex w-full items-center justify-between p-4 text-left font-semibold text-slate-800 hover:bg-slate-100/50 transition cursor-pointer"
             >
               <span className="flex items-center gap-2 text-emerald-700">
@@ -140,11 +139,11 @@ export default function ResumeForm({
                 Step 1: AI Writing Assistant Tone & Focus Instructions
               </span>
               <span className="text-slate-400 font-mono text-xs">
-                {activeSection === "prompt" ? "Collapse" : "Expand"}
+                {isPromptOpen ? "Collapse" : "Expand"}
               </span>
             </button>
             
-            {activeSection === "prompt" && (
+            {isPromptOpen && (
               <div className="p-4 pt-0 border-t border-slate-200/60 space-y-3 mt-3">
                 <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Custom Focus Instructions</label>
                 <textarea
@@ -161,7 +160,7 @@ export default function ResumeForm({
           {/* Panel 2: Base Info */}
           <div className="rounded border border-slate-200 bg-slate-50/50 overflow-hidden">
             <button
-              onClick={() => toggleSection("base")}
+              onClick={() => setIsBaseOpen(!isBaseOpen)}
               className="flex w-full items-center justify-between p-4 text-left font-semibold text-slate-800 hover:bg-slate-100/50 transition cursor-pointer"
             >
               <span className="flex items-center gap-2">
@@ -169,11 +168,11 @@ export default function ResumeForm({
                 Step 2: Enter Personal Profile & Primary Contact Details
               </span>
               <span className="text-slate-400 font-mono text-xs">
-                {activeSection === "base" ? "Collapse" : "Expand"}
+                {isBaseOpen ? "Collapse" : "Expand"}
               </span>
             </button>
 
-            {activeSection === "base" && (
+            {isBaseOpen && (
               <div className="p-4 pt-0 border-t border-slate-200/60 space-y-4 mt-3">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
@@ -249,7 +248,7 @@ export default function ResumeForm({
           {/* Panel 3: Work Experience */}
           <div className="rounded border border-slate-200 bg-slate-50/50 overflow-hidden">
             <button
-              onClick={() => toggleSection("experience")}
+              onClick={() => setIsExperienceOpen(!isExperienceOpen)}
               className="flex w-full items-center justify-between p-4 text-left font-semibold text-slate-800 hover:bg-slate-100/50 transition cursor-pointer"
             >
               <span className="flex items-center gap-2">
@@ -257,11 +256,11 @@ export default function ResumeForm({
                 Step 3: Add Your Work & Professional Experience
               </span>
               <span className="text-slate-400 font-mono text-xs">
-                {activeSection === "experience" ? "Collapse" : "Expand"}
+                {isExperienceOpen ? "Collapse" : "Expand"}
               </span>
             </button>
 
-            {activeSection === "experience" && (
+            {isExperienceOpen && (
               <div className="p-4 pt-0 border-t border-slate-200/60 space-y-4 mt-3">
                 {formData.experience.map((item, idx) => (
                   <div key={item.id} className="relative rounded border border-slate-200 bg-white p-4 space-y-3 shadow-sm">
@@ -318,6 +317,11 @@ export default function ResumeForm({
                         rows={3}
                         className="w-full rounded border border-slate-200 bg-white p-2.5 text-sm text-slate-800 placeholder-slate-400 outline-none resize-none focus:border-emerald-500/50"
                       />
+                      {(!item.company || !item.role || !item.time || !item.desc) && (
+                        <div className="text-red-600 text-xs font-semibold mt-2 flex items-center gap-1.5 bg-red-50 p-2.5 rounded border border-red-100">
+                          <span>⚠️ Please fill in all fields (Company, Role, Duration, and Description) for this experience item.</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -336,7 +340,7 @@ export default function ResumeForm({
           {/* Panel 4: Education */}
           <div className="rounded border border-slate-200 bg-slate-50/50 overflow-hidden">
             <button
-              onClick={() => toggleSection("education")}
+              onClick={() => setIsEducationOpen(!isEducationOpen)}
               className="flex w-full items-center justify-between p-4 text-left font-semibold text-slate-800 hover:bg-slate-100/50 transition cursor-pointer"
             >
               <span className="flex items-center gap-2">
@@ -344,11 +348,11 @@ export default function ResumeForm({
                 Step 4: Add Your Academic History & Education
               </span>
               <span className="text-slate-400 font-mono text-xs">
-                {activeSection === "education" ? "Collapse" : "Expand"}
+                {isEducationOpen ? "Collapse" : "Expand"}
               </span>
             </button>
 
-            {activeSection === "education" && (
+            {isEducationOpen && (
               <div className="p-4 pt-0 border-t border-slate-200/60 space-y-4 mt-3">
                 {formData.education.map((item, idx) => (
                   <div key={item.id} className="relative rounded border border-slate-200 bg-white p-4 space-y-3 shadow-sm">
@@ -407,8 +411,13 @@ export default function ResumeForm({
                         />
                       </div>
                     </div>
-                  </div>
-                ))}
+                      {(!item.school || !item.degree || !item.major || !item.time) && (
+                        <div className="text-red-600 text-xs font-semibold mt-2 flex items-center gap-1.5 bg-red-50 p-2.5 rounded border border-red-100">
+                          <span>⚠️ Please fill in all fields (School, Degree, Major, and Graduation Year) for this education item.</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 
                 <button
                   type="button"
@@ -424,7 +433,7 @@ export default function ResumeForm({
           {/* Panel 5: Projects */}
           <div className="rounded border border-slate-200 bg-slate-50/50 overflow-hidden">
             <button
-              onClick={() => toggleSection("projects")}
+              onClick={() => setIsProjectsOpen(!isProjectsOpen)}
               className="flex w-full items-center justify-between p-4 text-left font-semibold text-slate-800 hover:bg-slate-100/50 transition cursor-pointer"
             >
               <span className="flex items-center gap-2">
@@ -432,11 +441,11 @@ export default function ResumeForm({
                 Step 5: Add Your Key Personal Projects
               </span>
               <span className="text-slate-400 font-mono text-xs">
-                {activeSection === "projects" ? "Collapse" : "Expand"}
+                {isProjectsOpen ? "Collapse" : "Expand"}
               </span>
             </button>
 
-            {activeSection === "projects" && (
+            {isProjectsOpen && (
               <div className="p-4 pt-0 border-t border-slate-200/60 space-y-4 mt-3">
                 {formData.projects.map((item, idx) => (
                   <div key={item.id} className="relative rounded border border-slate-200 bg-white p-4 space-y-3 shadow-sm">
@@ -482,6 +491,11 @@ export default function ResumeForm({
                         rows={2}
                         className="w-full rounded border border-slate-200 bg-white p-2.5 text-sm text-slate-800 placeholder-slate-400 outline-none resize-none focus:border-emerald-500/50"
                       />
+                      {(!item.name || !item.desc) && (
+                        <div className="text-red-600 text-xs font-semibold mt-2 flex items-center gap-1.5 bg-red-50 p-2.5 rounded border border-red-100">
+                          <span>⚠️ Please fill in Project Name and Description.</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -500,7 +514,7 @@ export default function ResumeForm({
           {/* Panel 6: Skills */}
           <div className="rounded border border-slate-200 bg-slate-50/50 overflow-hidden">
             <button
-              onClick={() => toggleSection("skills")}
+              onClick={() => setIsSkillsOpen(!isSkillsOpen)}
               className="flex w-full items-center justify-between p-4 text-left font-semibold text-slate-800 hover:bg-slate-100/50 transition cursor-pointer"
             >
               <span className="flex items-center gap-2">
@@ -508,46 +522,80 @@ export default function ResumeForm({
                 Step 6: List Your Professional & Technical Skills
               </span>
               <span className="text-slate-400 font-mono text-xs">
-                {activeSection === "skills" ? "Collapse" : "Expand"}
+                {isSkillsOpen ? "Collapse" : "Expand"}
               </span>
             </button>
 
-            {activeSection === "skills" && (
+            {isSkillsOpen && (
               <div className="p-4 pt-0 border-t border-slate-200/60 space-y-4 mt-3">
                 {formData.skills.map((item, idx) => (
-                  <div key={item.id} className="flex items-center gap-3">
-                    <div className="flex-1">
-                      <input
-                        type="text"
-                        value={item.name}
-                        onChange={(e) => updateArrayItemField("skills", item.id, "name", e.target.value)}
-                        placeholder="e.g. React / Python / AWS"
-                        className="w-full rounded border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-emerald-500/50"
-                      />
+                  <div key={item.id} className="flex flex-col gap-2 p-3 bg-white border border-slate-100 rounded shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1">
+                        <input
+                          type="text"
+                          value={item.name}
+                          onChange={(e) => updateArrayItemField("skills", item.id, "name", e.target.value)}
+                          placeholder="e.g. React / Python / AWS"
+                          className="w-full rounded border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-emerald-500/50"
+                        />
+                      </div>
+                      
+                      {displaySkillLevels && (
+                        <div className="relative w-1/3">
+                          <button
+                            type="button"
+                            onClick={() => setOpenSkillSelectId(openSkillSelectId === item.id ? null : item.id)}
+                            className="w-full rounded border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none text-left flex justify-between items-center hover:bg-slate-50 cursor-pointer"
+                          >
+                            <span>{item.level || "(Select Level)"}</span>
+                            <span className="text-[10px] text-slate-400 font-mono">▼</span>
+                          </button>
+                          {openSkillSelectId === item.id && (
+                            <div className="absolute bottom-10 left-0 right-0 z-50 bg-white border border-slate-200 shadow-xl rounded py-1 max-h-36 overflow-y-auto">
+                              {["Expert", "Intermediate", "Beginner"].map(lvl => (
+                                <button
+                                  key={lvl}
+                                  type="button"
+                                  onClick={() => {
+                                    updateArrayItemField("skills", item.id, "level", lvl);
+                                    setOpenSkillSelectId(null);
+                                  }}
+                                  className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-50 cursor-pointer ${
+                                    item.level === lvl ? "bg-slate-100 text-slate-900 font-semibold" : "text-slate-600"
+                                  }`}
+                                >
+                                  {lvl}
+                                </button>
+                              ))}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  updateArrayItemField("skills", item.id, "level", "");
+                                  setOpenSkillSelectId(null);
+                                }}
+                                className="w-full text-left px-3 py-2 text-xs text-red-500 hover:bg-red-50 cursor-pointer border-t border-slate-100"
+                              >
+                                Clear Selection
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => removeArrayItem("skills", item.id)}
+                        className="p-2 rounded text-slate-400 hover:text-red-600 hover:bg-red-50 transition animate-in duration-200 cursor-pointer"
+                      >
+                        <IoTrashOutline className="h-4 w-4" />
+                      </button>
                     </div>
-                    
-                    {displaySkillLevels && (
-                      <div className="w-1/3">
-                        <select
-                          value={item.level}
-                          onChange={(e) => updateArrayItemField("skills", item.id, "level", e.target.value)}
-                          className="w-full rounded border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 outline-none focus:border-emerald-500/50"
-                        >
-                          <option value="">(Select Level)</option>
-                          <option value="Expert">Expert</option>
-                          <option value="Intermediate">Intermediate</option>
-                          <option value="Beginner">Beginner</option>
-                        </select>
+                    {!item.name && (
+                      <div className="text-red-600 text-[11px] font-semibold flex items-center gap-1 bg-red-50 px-2 py-1 rounded border border-red-100 w-fit">
+                        <span>⚠️ Please enter the skill name.</span>
                       </div>
                     )}
-
-                    <button
-                      type="button"
-                      onClick={() => removeArrayItem("skills", item.id)}
-                      className="p-2 rounded text-slate-400 hover:text-red-600 hover:bg-red-50 transition animate-in duration-200 cursor-pointer"
-                    >
-                      <IoTrashOutline className="h-4 w-4" />
-                    </button>
                   </div>
                 ))}
                 
@@ -581,9 +629,9 @@ export default function ResumeForm({
           </div>
 
           {/* Panel 7: Styling & Themes */}
-          <div className="rounded border border-slate-200 bg-slate-50/50 overflow-hidden">
+          <div className="rounded border border-slate-200 bg-slate-50/50">
             <button
-              onClick={() => toggleSection("styling")}
+              onClick={() => setIsStylingOpen(!isStylingOpen)}
               className="flex w-full items-center justify-between p-4 text-left font-semibold text-slate-800 hover:bg-slate-100/50 transition cursor-pointer"
             >
               <span className="flex items-center gap-2">
@@ -591,11 +639,11 @@ export default function ResumeForm({
                 Step 7: Customize Layout, Font, & Theme Design
               </span>
               <span className="text-slate-400 font-mono text-xs">
-                {activeSection === "styling" ? "Collapse" : "Expand"}
+                {isStylingOpen ? "Collapse" : "Expand"}
               </span>
             </button>
 
-            {activeSection === "styling" && (
+            {isStylingOpen && (
               <div className="p-4 pt-0 border-t border-slate-200/60 space-y-5 mt-3">
                 
                 {/* 1. Custom Upward Opening Dropdown for Layout Style */}
@@ -621,7 +669,7 @@ export default function ResumeForm({
                     <span className="text-[10px] text-slate-400">▼</span>
                   </button>
                   {templateDropdownOpen && (
-                    <div className="absolute top-full mt-1.5 left-0 right-0 z-50 bg-white border border-slate-200 shadow-xl rounded py-1 max-h-56 overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="absolute bottom-10 left-0 right-0 z-50 bg-white border border-slate-200 shadow-xl rounded py-1 max-h-56 overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-150">
                       {TEMPLATES.map(t => (
                         <button
                           key={t.id}
@@ -696,7 +744,7 @@ export default function ResumeForm({
                       <span className="text-[10px] text-slate-400">▼</span>
                     </button>
                     {fontDropdownOpen && (
-                      <div className="absolute top-full mt-1.5 left-0 right-0 z-50 bg-white border border-slate-200 shadow-xl rounded py-1 max-h-40 overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="absolute bottom-12 left-0 right-0 z-50 bg-white border border-slate-200 shadow-xl rounded py-1 max-h-40 overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-150">
                         {FONTS.map(f => (
                           <button
                             key={f}
@@ -732,7 +780,7 @@ export default function ResumeForm({
                       <span className="text-[10px] text-slate-400">▼</span>
                     </button>
                     {fontSizeDropdownOpen && (
-                      <div className="absolute top-full mt-1.5 left-0 right-0 z-50 bg-white border border-slate-200 shadow-xl rounded py-1 max-h-40 overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="absolute bottom-12 left-0 right-0 z-50 bg-white border border-slate-200 shadow-xl rounded py-1 max-h-40 overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-150">
                         {SIZES.map(s => (
                           <button
                             key={s}
