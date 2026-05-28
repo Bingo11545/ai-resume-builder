@@ -61,7 +61,7 @@ function EditorContent() {
   // Load existing resume data if editing
   useEffect(() => {
     if (status === "unauthenticated") {
-      signIn("google");
+      setPageLoading(false);
       return;
     }
 
