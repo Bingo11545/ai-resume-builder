@@ -1,6 +1,9 @@
-# 📄 AI Resume Builder — Minimalist & Premium Resume Optimizing SaaS
+# 📄 AI Resume Builder — Open-Source AI Resume Builder & Optimizer SaaS (Free Teal / Kickresume Alternative)
 
-> **Generate professional, high-impact, metrics-oriented, and print-ready resumes with advanced AI language models.** Built using Next.js, this application serves as a complete, self-contained SaaS boilerplate for configuring custom resume content, adjusting professional templates, selecting custom typography, and generating public hosted links or pixel-perfect PDF/Word formats powered by advanced upstream LLM engines.
+> **Generate professional, metrics-driven, ATS-optimized resumes with AI in seconds.** A production-ready, self-hostable Next.js SaaS boilerplate with multiple templates, custom typography, PDF/Word export, and public shareable links — powered by the MuAPI AI engine. A free open-source alternative to Teal, Kickresume, Rezi, Resume.io, and Zety.
+
+**Tech stack:** Next.js 14 (App Router) · Prisma · PostgreSQL · NextAuth (Google OAuth) · Stripe · Tailwind CSS · MuAPI any-llm
+**Use cases:** Job seekers · Career coaches · University career centers · Recruiting agencies · LinkedIn profile optimization · Bootcamp graduates · Professional rebranding · ATS resume optimization
 
 ## 🌐 Try the Live Engine
 
