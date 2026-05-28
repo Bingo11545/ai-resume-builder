@@ -52,48 +52,40 @@ export default function ResumeForm({
 
   // Base field updater
   const updateBaseField = (field, val) => {
-    setFormData(prev => {
-      const updated = {
-        ...prev,
-        base: { ...prev.base, [field]: val }
-      };
-      onSave(updated);
-      return updated;
-    });
+    const updated = {
+      ...formData,
+      base: { ...formData.base, [field]: val }
+    };
+    setFormData(updated);
+    onSave(updated);
   };
 
   // Dynamic Array Helpers (Experience, Education, Projects, Skills)
   const addArrayItem = (section, defaultObj) => {
-    setFormData(prev => {
-      const updated = {
-        ...prev,
-        [section]: [...prev[section], { id: crypto.randomUUID(), ...defaultObj }]
-      };
-      onSave(updated);
-      return updated;
-    });
+    const updated = {
+      ...formData,
+      [section]: [...formData[section], { id: crypto.randomUUID(), ...defaultObj }]
+    };
+    setFormData(updated);
+    onSave(updated);
   };
 
   const removeArrayItem = (section, id) => {
-    setFormData(prev => {
-      const updated = {
-        ...prev,
-        [section]: prev[section].filter(item => item.id !== id)
-      };
-      onSave(updated);
-      return updated;
-    });
+    const updated = {
+      ...formData,
+      [section]: formData[section].filter(item => item.id !== id)
+    };
+    setFormData(updated);
+    onSave(updated);
   };
 
   const updateArrayItemField = (section, id, field, val) => {
-    setFormData(prev => {
-      const updated = {
-        ...prev,
-        [section]: prev[section].map(item => item.id === id ? { ...item, [field]: val } : item)
-      };
-      onSave(updated);
-      return updated;
-    });
+    const updated = {
+      ...formData,
+      [section]: formData[section].map(item => item.id === id ? { ...item, [field]: val } : item)
+    };
+    setFormData(updated);
+    onSave(updated);
   };
 
   // Color Swatches presets
@@ -121,7 +113,6 @@ export default function ResumeForm({
   // Helper to merge AI optimized data back into form state
   const handleAiUpdate = (newData) => {
     setFormData(newData);
-    onSave(newData);
   };
 
   // Expose this update helper to parent
