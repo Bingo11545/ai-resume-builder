@@ -14,8 +14,24 @@ export default function ResumePreview({ htmlContent, loading, onShare }) {
         frameWindow.focus();
         frameWindow.print();
       } catch (err) {
-        console.error("Print failed:", err);
-        alert("Unable to open print preview. Try opening it on a separate page.");
+        console.warn("Iframe print failed, attempting window popup fallback:", err);
+        try {
+          const newWindow = window.open("", "_blank");
+          if (newWindow) {
+            newWindow.document.write(htmlContent);
+            newWindow.document.close();
+            newWindow.focus();
+            setTimeout(() => {
+              newWindow.print();
+              newWindow.close();
+            }, 500);
+          } else {
+            alert("Pop-up blocker prevented opening print window. Please allow popups for this site.");
+          }
+        } catch (fallbackErr) {
+          console.error("Print fallback failed:", fallbackErr);
+          alert("Unable to open print preview. Try exporting as Word instead.");
+        }
       }
     }
   };
@@ -121,7 +137,7 @@ export default function ResumePreview({ htmlContent, loading, onShare }) {
               srcDoc={htmlContent}
               className="w-full h-full border-none"
               title="Resume Document Preview"
-              sandbox="allow-same-origin allow-popups allow-forms allow-scripts"
+              sandbox="allow-same-origin allow-popups allow-forms allow-scripts allow-modals"
             />
           </div>
         ) : (
