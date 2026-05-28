@@ -317,7 +317,7 @@ YOUR INSTRUCTIONS:
           body: JSON.stringify({
             prompt: promptInstruction,
             system_prompt: "You are a professional resume parser and generator. You MUST output ONLY a valid JSON object. No markdown, no backticks, no comments, no extra text.",
-            model: "google/gemini-2.5-flash",
+            model: "openai/gpt-4o",
             temperature: 0.4,
             webhook: webhookUrl
           })
