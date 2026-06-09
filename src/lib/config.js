@@ -1,4 +1,5 @@
 const config = {
+  appName: "Ai Resume Builder",
   auth: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID,
