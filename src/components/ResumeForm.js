@@ -142,7 +142,7 @@ export default function ResumeForm({
   }
 
   return (
-    <div className="flex h-full flex-col bg-white rounded border border-slate-200 shadow-sm overflow-hidden">
+    <div className="flex flex-col bg-white rounded border border-slate-200 shadow-sm overflow-hidden">
       
       {/* Scrollable Container */}
       <div className="flex-1 overflow-y-auto pt-4 px-4 pb-4 space-y-6">
@@ -196,7 +196,7 @@ export default function ResumeForm({
 
             {isBaseOpen && (
               <div className="p-4 pt-0 border-t border-slate-200/60 space-y-4 mt-3">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Full Name</label>
                     <input
@@ -219,8 +219,8 @@ export default function ResumeForm({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-1.5 col-span-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="space-y-1.5 sm:col-span-2">
                     <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Email Address</label>
                     <input
                       type="email"
@@ -296,7 +296,7 @@ export default function ResumeForm({
                     
                     <span className="text-[10px] font-bold tracking-widest uppercase text-emerald-600 font-mono">Job Experience #{idx+1}</span>
                     
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
                         <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Company Name</label>
                         <input
@@ -388,7 +388,7 @@ export default function ResumeForm({
                     
                     <span className="text-[10px] font-bold tracking-widest uppercase text-emerald-600 font-mono">Academic Credential #{idx+1}</span>
                     
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
                         <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">School / University</label>
                         <input
@@ -411,7 +411,7 @@ export default function ResumeForm({
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
                         <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Major / Field of Study</label>
                         <input
@@ -481,7 +481,7 @@ export default function ResumeForm({
                     
                     <span className="text-[10px] font-bold tracking-widest uppercase text-emerald-600 font-mono">Personal Project #{idx+1}</span>
                     
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
                         <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Project Name</label>
                         <input
@@ -748,7 +748,7 @@ export default function ResumeForm({
                 </div>
 
                 {/* 3. Fonts and sizes in premium custom dropdowns opening UPWARDS */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   
                   {/* Font Family Upward Dropdown */}
                   <div className="space-y-2 relative">

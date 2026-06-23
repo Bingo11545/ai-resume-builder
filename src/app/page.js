@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 import ResumeForm from "../components/ResumeForm";
 import ResumePreview from "../components/ResumePreview";
+import Footer from "../components/Footer";
 import { IoSparkles, IoWalletOutline, IoClose, IoCopyOutline } from "react-icons/io5";
 
 // Helper to ensure each array item has a unique id
@@ -185,7 +186,7 @@ function EditorContent() {
   return (
     <>
       {/* Editor Workspace Container */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-6 overflow-hidden">
+      <main className="w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-6 pb-10">
         
         {/* Workspace Title & Credits warning */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-4">
@@ -198,7 +199,7 @@ function EditorContent() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-1.5 rounded border border-slate-200 bg-slate-100 px-3 py-1.5 text-xs text-slate-600 font-semibold shadow-inner">
               <IoWalletOutline className="h-4 w-4 text-emerald-600" />
               <span>Cost: 18 credits</span>
@@ -207,7 +208,7 @@ function EditorContent() {
             <button
               onClick={handleImproveWithAi}
               disabled={loading}
-              className="flex items-center gap-2 rounded bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 text-xs uppercase tracking-wider disabled:opacity-50 shadow-md active:scale-95 transition cursor-pointer"
+              className="flex items-center gap-2 rounded bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-2.5 text-xs uppercase tracking-wider disabled:opacity-50 shadow-md active:scale-95 transition cursor-pointer w-full sm:w-auto justify-center"
             >
               <IoSparkles className="h-4 w-4 text-lime-400 animate-pulse" />
               {loading ? "Optimizing..." : "Improve with AI"}
@@ -215,10 +216,10 @@ function EditorContent() {
           </div>
         </div>
 
-        {/* Dual panel Split View Layout */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Dual panel Split View Layout — stacks on mobile, side by side on lg+ */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left panel: accordion forms & options */}
-          <div className="h-full">
+          <div className="min-h-[500px]">
             <ResumeForm
               initialData={formData}
               userPrompt={userPrompt}
@@ -237,7 +238,7 @@ function EditorContent() {
           </div>
 
           {/* Right panel: dynamic sandboxed iframe preview */}
-          <div className="h-full">
+          <div className="min-h-[500px]">
             <ResumePreview 
               htmlContent={htmlContent} 
               loading={loading} 
@@ -246,6 +247,7 @@ function EditorContent() {
           </div>
         </div>
       </main>
+      <Footer />
 
       {/* Share Modal Dialog */}
       {shareModalOpen && (

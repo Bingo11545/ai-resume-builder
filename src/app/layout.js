@@ -19,10 +19,10 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en" className="h-full w-full" data-theme={theme}>
-      <body className={`${inter.variable} h-full w-full flex flex-col antialiased bg-bg-page text-primary-text font-sans overflow-hidden`}>
+      <body className={`${inter.variable} min-h-full w-full flex flex-col antialiased bg-bg-page text-primary-text font-sans`}>
         <Providers>
           <Navbar />
-          <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+          <div className="flex-1 flex flex-col min-h-0">
             {children}
           </div>
         </Providers>

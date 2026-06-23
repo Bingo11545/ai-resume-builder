@@ -3,6 +3,7 @@
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import Footer from "@/components/Footer";
 import { 
   IoAlbumsOutline, IoCreateOutline, IoTrashOutline, 
   IoCopyOutline, IoShareSocialOutline, IoTimeOutline, IoSparkles 
@@ -110,7 +111,8 @@ export default function Gallery() {
   }
 
   return (
-    <main className="flex-1 py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+    <>
+      <main className="w-full max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
       
       {/* Workspace Title */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-6 mb-10">
@@ -126,7 +128,7 @@ export default function Gallery() {
 
         <button
           onClick={() => router.push("/")}
-          className="rounded bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3 text-xs uppercase tracking-wider shadow-md transition cursor-pointer"
+          className="rounded bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3 text-xs uppercase tracking-wider shadow-md transition cursor-pointer w-full sm:w-auto"
         >
           Create New Document
         </button>
@@ -239,6 +241,8 @@ export default function Gallery() {
           ))}
         </div>
       )}
-    </main>
+      </main>
+      <Footer />
+    </>
   );
 }

@@ -78,17 +78,17 @@ export default function ResumePreview({ htmlContent, loading, onShare }) {
   };
 
   return (
-    <div className="flex h-full flex-col bg-white rounded border border-slate-200 shadow-sm overflow-hidden relative min-h-[500px]">
+    <div className="flex flex-col bg-white rounded border border-slate-200 shadow-sm overflow-hidden relative">
       
       {/* Header Toolbar */}
-      <div className="border-b border-slate-100 bg-slate-50/50 p-4 flex flex-wrap items-center justify-between gap-3 z-10">
+      <div className="border-b border-slate-100 bg-slate-50/50 p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 z-10">
         <span className="flex items-center gap-2 text-sm font-semibold text-slate-800">
           <IoDocumentTextOutline className="h-5 w-5 text-emerald-600" />
           Live Document Preview
         </span>
 
         {htmlContent && !loading && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={handlePrint}
               className="flex items-center gap-1.5 rounded border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition cursor-pointer"
@@ -115,7 +115,7 @@ export default function ResumePreview({ htmlContent, loading, onShare }) {
       </div>
 
       {/* Main Preview Screen */}
-      <div className="flex-1 bg-slate-50/50 p-4 sm:p-6 flex justify-center items-start overflow-auto">
+      <div className="bg-slate-50/50 p-3 sm:p-6 flex justify-center items-start overflow-auto min-h-[400px] sm:min-h-[600px] relative">
         {loading ? (
           <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center gap-4 z-20 animate-in fade-in duration-200">
             <div className="relative flex h-16 w-16 items-center justify-center">
@@ -131,17 +131,30 @@ export default function ResumePreview({ htmlContent, loading, onShare }) {
         ) : null}
 
         {htmlContent ? (
-          <div className="w-full max-w-[210mm] aspect-[210/297] bg-white rounded shadow-lg overflow-hidden border border-slate-200">
-            <iframe
-              ref={iframeRef}
-              srcDoc={htmlContent}
-              className="w-full h-full border-none"
-              title="Resume Document Preview"
-              sandbox="allow-same-origin allow-popups allow-forms allow-scripts allow-modals"
-            />
+          <div className="w-full">
+            {/* Mobile: scrollable iframe without fixed aspect ratio */}
+            <div className="block sm:hidden w-full bg-white rounded shadow-lg overflow-hidden border border-slate-200" style={{ height: '70vh' }}>
+              <iframe
+                ref={iframeRef}
+                srcDoc={htmlContent}
+                className="w-full h-full border-none"
+                title="Resume Document Preview"
+                sandbox="allow-same-origin allow-popups allow-forms allow-scripts allow-modals"
+              />
+            </div>
+            {/* Tablet/Desktop: A4 proportional preview */}
+            <div className="hidden sm:block w-full max-w-[210mm] mx-auto aspect-[210/297] bg-white rounded shadow-lg overflow-hidden border border-slate-200">
+              <iframe
+                ref={iframeRef}
+                srcDoc={htmlContent}
+                className="w-full h-full border-none"
+                title="Resume Document Preview"
+                sandbox="allow-same-origin allow-popups allow-forms allow-scripts allow-modals"
+              />
+            </div>
           </div>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-slate-200 rounded max-w-md mx-auto my-auto min-h-[300px] bg-white shadow-sm">
+          <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-slate-200 rounded w-full max-w-md mx-auto my-auto min-h-[300px] bg-white shadow-sm">
             <div className="rounded-full bg-slate-50 p-4 border border-slate-100 mb-4">
               <IoDocumentTextOutline className="h-8 w-8 text-slate-400" />
             </div>

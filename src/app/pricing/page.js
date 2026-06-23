@@ -2,8 +2,6 @@
 
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { FaCheck, FaInfoCircle } from "react-icons/fa";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
@@ -42,11 +40,10 @@ export default function Pricing() {
   };
 
   return (
-    <div className="flex min-h-dvh flex-col bg-bg-page select-none text-primary-text overflow-hidden">
+    <div className="flex flex-col bg-bg-page select-none text-primary-text">
       <Toaster position="top-right" />
-      <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-12 sm:px-6 lg:px-8 flex flex-col gap-10 overflow-y-auto scrollbar-subtle items-center">
+      <main className="w-full max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8 flex flex-col gap-10 items-center">
         <div className="text-center space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full mb-1">
             <FaInfoCircle className="text-primary text-xs" />
@@ -59,12 +56,12 @@ export default function Pricing() {
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-5xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 w-full max-w-5xl">
           {PLANS.map((plan) => (
             <div
               key={plan.id}
               className={`relative bg-bg-card border rounded-lg p-6 flex flex-col justify-between gap-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
-                plan.popular ? "border-primary shadow-xl shadow-primary/5 scale-105" : "border-divider/50 shadow-md"
+                plan.popular ? "border-primary shadow-xl shadow-primary/5" : "border-divider/50 shadow-md"
               }`}
             >
               {plan.popular && (
@@ -114,8 +111,6 @@ export default function Pricing() {
           ))}
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }
