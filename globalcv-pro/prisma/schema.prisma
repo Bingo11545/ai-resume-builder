@@ -1,0 +1,114 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id            String        @id @default(cuid())
+  name          String?
+  email         String?       @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String        @default("user")
+  country       String        @default("international")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  cvs           CV[]
+  payments      Payment[]
+  notifications Notification[]
+}
+
+model CV {
+  id              String    @id @default(cuid())
+  userId          String
+  title           String    @default("My CV")
+  status          String    @default("draft")
+  templateId      String    @default("modern")
+  personalInfo    String    @db.Text
+  summary         String?   @db.Text
+  education       String    @db.Text @default("[]")
+  experience      String    @db.Text @default("[]")
+  internships     String    @db.Text @default("[]")
+  projects        String    @db.Text @default("[]")
+  skills          String    @db.Text @default("[]")
+  certifications  String    @db.Text @default("[]")
+  languages       String    @db.Text @default("[]")
+  references      String    @db.Text @default("[]")
+  htmlContent     String?   @db.Text
+  pdfUrl          String?
+  shareToken      String?   @unique
+  isPublic        Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payment         Payment?
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  userId          String
+  cvId            String   @unique
+  amount          Float
+  currency        String   @default("USD")
+  screenshotUrl   String?
+  transactionId   String?
+  paymentDate     String?
+  status          String   @default("pending")
+  rejectionReason String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cv              CV       @relation(fields: [cvId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String   @db.Text
+  type      String   @default("info")
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
