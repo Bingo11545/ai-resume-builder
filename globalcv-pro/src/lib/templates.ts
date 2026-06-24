@@ -89,7 +89,7 @@ function templateModern(d: any, accent: string): string {
   const p = d.personalInfo||{}, s = d.summary||{};
   const tech = [...(d.skills?.technical?.languages||[]),(d.skills?.technical?.frameworks||[]),(d.skills?.technical?.databases||[]),(d.skills?.technical?.cloud||[]),(d.skills?.technical?.tools||[]),(d.skills?.technical?.design||[])].flat().filter(Boolean);
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
-  *{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;font-size:11px;line-height:1.5;color:#1e293b;background:white}
+  *{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;font-size:11px;line-height:1.5;color:${d.textColor||"#1e293b"};background:white}
   .wrapper{max-width:210mm;margin:0 auto;min-height:297mm}
   .header{background:${accent};color:white;padding:28px 32px;display:flex;align-items:center;gap:20px}
   .photo{width:76px;height:76px;border-radius:50%;border:3px solid rgba(255,255,255,.4);object-fit:cover;flex-shrink:0}
@@ -208,7 +208,7 @@ function templateCorporate(d: any, accent: string): string {
   const p = d.personalInfo||{}, s = d.summary||{};
   const tech = [...(d.skills?.technical?.languages||[]),(d.skills?.technical?.frameworks||[]),(d.skills?.technical?.databases||[]),(d.skills?.technical?.tools||[])].flat().filter(Boolean);
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
-  *{margin:0;padding:0;box-sizing:border-box}body{font-family:Georgia,serif;font-size:10.5px;line-height:1.6;color:#1e293b;background:white}
+  *{margin:0;padding:0;box-sizing:border-box}body{font-family:Georgia,serif;font-size:10.5px;line-height:1.6;color:${d.textColor||"#1e293b"};background:white}
   .header{border-top:6px solid ${accent};padding:24px 32px 18px;border-bottom:1px solid #e2e8f0}
   h1{font-size:24px;font-weight:bold;color:${accent};letter-spacing:.5px}
   .subtitle{font-size:12px;color:#64748b;font-style:italic;margin-top:3px}
@@ -317,7 +317,7 @@ function templateCreative(d: any, accent: string): string {
   const p = d.personalInfo||{}, s = d.summary||{};
   const tech = [...(d.skills?.technical?.languages||[]),(d.skills?.technical?.frameworks||[]),(d.skills?.technical?.tools||[]),(d.skills?.technical?.design||[])].flat().filter(Boolean);
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
-  *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Trebuchet MS',sans-serif;font-size:10.5px;line-height:1.6;color:#1e293b;background:white}
+  *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Trebuchet MS',sans-serif;font-size:10.5px;line-height:1.6;color:${d.textColor||"#1e293b"};background:white}
   .header{display:grid;grid-template-columns:auto 1fr;background:${accent};color:white;min-height:120px}
   .avatar-col{width:120px;display:flex;align-items:center;justify-content:center;background:${accent}dd;padding:20px}
   .photo{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.5)}
@@ -441,14 +441,15 @@ export const COLOR_PRESETS = [
 export function generateCVHtml(cvData: any): string {
   const templateId = cvData.templateId || "modern";
   const accent = cvData.accentColor || "#1e40af";
+  const textColor = cvData.textColor || "#1e293b";
 
   switch (templateId) {
-    case "ats":           return templateAts(cvData, accent);
-    case "minimalist":    return templateMinimalist(cvData, accent);
-    case "corporate":     return templateCorporate(cvData, accent);
-    case "tech":          return templateTech(cvData, accent);
-    case "creative":      return templateCreative(cvData, accent);
-    case "international": return templateInternational(cvData, accent);
-    default:              return templateModern(cvData, accent);
+    case "ats":           return templateAts({ ...cvData, textColor }, accent);
+    case "minimalist":    return templateMinimalist({ ...cvData, textColor }, accent);
+    case "corporate":     return templateCorporate({ ...cvData, textColor }, accent);
+    case "tech":          return templateTech({ ...cvData, textColor }, accent);
+    case "creative":      return templateCreative({ ...cvData, textColor }, accent);
+    case "international": return templateInternational({ ...cvData, textColor }, accent);
+    default:              return templateModern({ ...cvData, textColor }, accent);
   }
 }
