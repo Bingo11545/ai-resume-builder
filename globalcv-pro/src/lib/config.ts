@@ -18,7 +18,7 @@ export const TEMPLATES = [
 export const PAYMENT_METHODS = {
   ethiopia: [
     { name: "Commercial Bank of Ethiopia (CBE)", account: "1000338448396", holder: "Haileyesus Tadilo" },
-    { name: "Telebirr", account: "1000338448396", holder: "Haileyesus Tadilo" },
+    { name: "Telebirr", account: "0935224855", holder: "Haileyesus Tadilo" },
   ],
   international: [
     { name: "PayPal", account: "hailetadilo@gmail.com", note: "Send as Friends & Family" },
