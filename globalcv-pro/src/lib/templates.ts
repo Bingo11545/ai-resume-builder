@@ -83,11 +83,61 @@ function printStyles() {
   return `@page{margin:10mm;size:A4}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}`;
 }
 
-// ─── Template 1: Modern Professional (split-column) ─────────────────────────
+// ─── Template 1: Modern Professional — supports 4 CV layouts ───────────────
 
 function templateModern(d: any, accent: string): string {
   const p = d.personalInfo||{}, s = d.summary||{};
   const tech = [...(d.skills?.technical?.languages||[]),(d.skills?.technical?.frameworks||[]),(d.skills?.technical?.databases||[]),(d.skills?.technical?.cloud||[]),(d.skills?.technical?.tools||[]),(d.skills?.technical?.design||[])].flat().filter(Boolean);
+  const cvLayout = d.cvLayout || "two-col"; // two-col | single | sidebar-left | compact
+
+  const mainContent = `
+    ${s.summary||s.objective?`<div class="sec"><div class="sec-title">Professional Summary</div>
+      ${s.objective?`<p style="font-size:10.5px;color:#475569;margin-bottom:5px"><strong>Objective:</strong> ${s.objective}</p>`:""}
+      ${s.summary?`<p style="font-size:10.5px;color:#475569;line-height:1.7">${s.summary}</p>`:""}</div>`:""}
+    ${d.experience?.length?`<div class="sec"><div class="sec-title">Work Experience</div>${expBlock(d.experience,accent)}</div>`:""}
+    ${d.internships?.length?`<div class="sec"><div class="sec-title">Internship Experience</div>${expBlock(d.internships,accent)}</div>`:""}
+    ${d.projects?.length?`<div class="sec"><div class="sec-title">Projects</div>${projectBlock(d.projects,accent)}</div>`:""}
+  `;
+
+  const sideContent = `
+    ${d.education?.length?`<div class="sec"><div class="side-title">Education</div>${eduBlock(d.education,accent)}</div>`:""}
+    ${tech.length?`<div class="sec"><div class="side-title">Technical Skills</div><div>${skillTags(tech,accent)}</div></div>`:""}
+    ${d.skills?.soft?.length?`<div class="sec"><div class="side-title">Soft Skills</div><div>${skillTags(d.skills.soft,accent)}</div></div>`:""}
+    ${d.certifications?.length?`<div class="sec"><div class="side-title">Certifications</div>${certBlock(d.certifications)}</div>`:""}
+    ${d.languages?.length?`<div class="sec"><div class="side-title">Languages</div>${langBlock(d.languages)}</div>`:""}
+    ${d.references?.length?`<div class="sec"><div class="side-title">References</div>${refBlock(d.references)}</div>`:""}
+  `;
+
+  const allContent = mainContent + `
+    ${d.education?.length?`<div class="sec"><div class="sec-title">Education</div>${eduBlock(d.education,accent)}</div>`:""}
+    ${tech.length?`<div class="sec"><div class="sec-title">Skills</div><div>${skillTags(tech,accent)}</div></div>`:""}
+    ${d.skills?.soft?.length?`<div class="sec"><div class="sec-title">Soft Skills</div><div>${skillTags(d.skills.soft,accent)}</div></div>`:""}
+    ${d.certifications?.length?`<div class="sec"><div class="sec-title">Certifications</div>${certBlock(d.certifications)}</div>`:""}
+    ${d.languages?.length?`<div class="sec"><div class="sec-title">Languages</div>${langBlock(d.languages)}</div>`:""}
+  `;
+
+  // Body HTML varies by cvLayout
+  let bodyHtml = "";
+  if (cvLayout === "single") {
+    bodyHtml = `<div style="padding:22px 32px">${allContent}</div>`;
+  } else if (cvLayout === "sidebar-left") {
+    bodyHtml = `<div class="body" style="grid-template-columns:1fr 2fr">
+      <div class="side" style="border-left:none;border-right:1px solid #e2e8f0">${sideContent}</div>
+      <div class="main">${mainContent}</div>
+    </div>`;
+  } else if (cvLayout === "compact") {
+    bodyHtml = `<div style="display:grid;grid-template-columns:1fr 1fr;padding:16px 20px;gap:16px">
+      <div>${mainContent}</div>
+      <div>${sideContent}</div>
+    </div>`;
+  } else {
+    // default: two-col (main left 2fr, sidebar right 1fr)
+    bodyHtml = `<div class="body">
+      <div class="main">${mainContent}</div>
+      <div class="side">${sideContent}</div>
+    </div>`;
+  }
+
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
   *{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;font-size:11px;line-height:1.5;color:${d.textColor||"#1e293b"};background:white}
   .wrapper{max-width:210mm;margin:0 auto;min-height:297mm}
@@ -107,24 +157,7 @@ function templateModern(d: any, accent: string): string {
     <div><div class="h-name">${p.name||"Your Name"}</div><div class="h-title">${p.title||s.targetRole||"Professional Title"}</div>
     <div class="contact">${contactRow(p, accent)}</div></div>
   </div>
-  <div class="body">
-    <div class="main">
-      ${s.summary||s.objective?`<div class="sec"><div class="sec-title">Professional Summary</div>
-        ${s.objective?`<p style="font-size:10.5px;color:#475569;margin-bottom:5px"><strong>Objective:</strong> ${s.objective}</p>`:""}
-        ${s.summary?`<p style="font-size:10.5px;color:#475569;line-height:1.7">${s.summary}</p>`:""}</div>`:""}
-      ${d.experience?.length?`<div class="sec"><div class="sec-title">Work Experience</div>${expBlock(d.experience,accent)}</div>`:""}
-      ${d.internships?.length?`<div class="sec"><div class="sec-title">Internship Experience</div>${expBlock(d.internships,accent)}</div>`:""}
-      ${d.projects?.length?`<div class="sec"><div class="sec-title">Projects</div>${projectBlock(d.projects,accent)}</div>`:""}
-    </div>
-    <div class="side">
-      ${d.education?.length?`<div class="sec"><div class="side-title">Education</div>${eduBlock(d.education,accent)}</div>`:""}
-      ${tech.length?`<div class="sec"><div class="side-title">Technical Skills</div><div>${skillTags(tech,accent)}</div></div>`:""}
-      ${d.skills?.soft?.length?`<div class="sec"><div class="side-title">Soft Skills</div><div>${skillTags(d.skills.soft,accent)}</div></div>`:""}
-      ${d.certifications?.length?`<div class="sec"><div class="side-title">Certifications</div>${certBlock(d.certifications)}</div>`:""}
-      ${d.languages?.length?`<div class="sec"><div class="side-title">Languages</div>${langBlock(d.languages)}</div>`:""}
-      ${d.references?.length?`<div class="sec"><div class="side-title">References</div>${refBlock(d.references)}</div>`:""}
-    </div>
-  </div>
+  ${bodyHtml}
 </div></body></html>`;
 }
 

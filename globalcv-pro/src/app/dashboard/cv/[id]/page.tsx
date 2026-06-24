@@ -7,7 +7,7 @@ import CVForm from "@/components/CVForm";
 import CVPreview from "@/components/CVPreview";
 import {
   FiSave, FiEye, FiEyeOff, FiSend, FiLoader,
-  FiLock, FiDownload, FiColumns, FiChevronDown
+  FiLock, FiDownload
 } from "react-icons/fi";
 import { IoSparkles } from "react-icons/io5";
 import toast, { Toaster } from "react-hot-toast";
@@ -31,6 +31,7 @@ const DEFAULT_CV = {
   templateId: "modern",
   accentColor: "#1e40af",
   textColor: "#1e293b",
+  cvLayout: "two-col",
   personalInfo: { name: "", title: "", phone: "", email: "", city: "", country: "", linkedin: "", github: "", portfolio: "", dob: "", nationality: "", photo: "" },
   summary: { objective: "", summary: "", yearsOfExperience: "", targetRole: "" },
   education: [], experience: [], internships: [], projects: [],
@@ -64,7 +65,6 @@ function CVBuilderInner() {
   const [cvData, setCvData] = useState<any>({ ...DEFAULT_CV, templateId: templateParam });
   const [cvId, setCvId] = useState<string | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
-  const [layout, setLayout] = useState<LayoutMode>("split-lr");
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [saving, setSaving] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
@@ -159,41 +159,31 @@ function CVBuilderInner() {
     setCvData((prev: any) => ({ ...prev, [field]: value }));
   };
 
-  // ── Workspace layout options (separate from CV template) ──────────
-  const LAYOUT_OPTIONS: { mode: LayoutMode; label: string; svg: React.ReactNode }[] = [
+  // ── CV Layout options (changes CV internal structure, not workspace) ──
+  const CV_LAYOUTS = [
     {
-      mode: "split-lr",
-      label: "Form Left, Preview Right",
-      svg: <svg width="18" height="13" viewBox="0 0 18 13"><rect x="0" y="0" width="8" height="13" fill="currentColor" opacity=".9" rx="1"/><rect x="10" y="0" width="8" height="13" fill="currentColor" opacity=".3" rx="1"/></svg>,
+      id: "two-col",
+      label: "Two Column (Main + Sidebar)",
+      svg: <svg width="18" height="13" viewBox="0 0 18 13"><rect x="0" y="0" width="11" height="13" fill="currentColor" opacity=".8" rx="1"/><rect x="13" y="0" width="5" height="13" fill="currentColor" opacity=".35" rx="1"/></svg>,
     },
     {
-      mode: "split-rl",
-      label: "Preview Left, Form Right",
-      svg: <svg width="18" height="13" viewBox="0 0 18 13"><rect x="0" y="0" width="8" height="13" fill="currentColor" opacity=".3" rx="1"/><rect x="10" y="0" width="8" height="13" fill="currentColor" opacity=".9" rx="1"/></svg>,
+      id: "single",
+      label: "Single Column (Full Width)",
+      svg: <svg width="18" height="13" viewBox="0 0 18 13"><rect x="0" y="0" width="18" height="13" fill="currentColor" opacity=".8" rx="1"/></svg>,
     },
     {
-      mode: "stacked",
-      label: "Form Top, Preview Bottom",
-      svg: <svg width="14" height="14" viewBox="0 0 14 14"><rect x="0" y="0" width="14" height="6" fill="currentColor" opacity=".9" rx="1"/><rect x="0" y="8" width="14" height="6" fill="currentColor" opacity=".3" rx="1"/></svg>,
+      id: "sidebar-left",
+      label: "Sidebar Left + Content Right",
+      svg: <svg width="18" height="13" viewBox="0 0 18 13"><rect x="0" y="0" width="5" height="13" fill="currentColor" opacity=".35" rx="1"/><rect x="7" y="0" width="11" height="13" fill="currentColor" opacity=".8" rx="1"/></svg>,
     },
     {
-      mode: "preview",
-      label: "Preview Only",
-      svg: <svg width="18" height="13" viewBox="0 0 18 13"><rect x="0" y="0" width="18" height="13" fill="currentColor" opacity=".7" rx="1"/></svg>,
+      id: "compact",
+      label: "Compact Two Equal Columns",
+      svg: <svg width="18" height="13" viewBox="0 0 18 13"><rect x="0" y="0" width="8" height="13" fill="currentColor" opacity=".7" rx="1"/><rect x="10" y="0" width="8" height="13" fill="currentColor" opacity=".7" rx="1"/></svg>,
     },
   ];
 
-  // ── Workspace container/panel classes based on layout mode ──────
-  const getLayoutClasses = (mode: LayoutMode) => {
-    switch (mode) {
-      case "split-lr":   return { container: "flex flex-row",         form: "w-1/2 border-r border-slate-200 dark:border-slate-700", preview: "w-1/2" };
-      case "split-rl":   return { container: "flex flex-row-reverse", form: "w-1/2 border-l border-slate-200 dark:border-slate-700", preview: "w-1/2" };
-      case "stacked":    return { container: "flex flex-col",         form: "h-[45%] border-b border-slate-200 dark:border-slate-700", preview: "flex-1" };
-      case "preview":    return { container: "flex flex-col",         form: "hidden", preview: "flex-1" };
-    }
-  };
-
-  const LC = getLayoutClasses(layout);
+  // ── Editor area ──
 
   return (
     <DashboardLayout>
@@ -252,22 +242,25 @@ function CVBuilderInner() {
 
           <div className="h-4 w-px bg-slate-200 dark:bg-slate-600 hidden sm:block" />
 
-          {/* ── Layout switcher — 4 workspace arrangement buttons ── */}
-          <div className="flex items-center gap-0.5 p-1 border border-slate-200 dark:border-slate-600 rounded-lg" title="Workspace Layout">
-            {LAYOUT_OPTIONS.map(opt => (
-              <button
-                key={opt.mode}
-                title={opt.label}
-                onClick={() => setLayout(opt.mode)}
-                className={`w-8 h-7 rounded flex items-center justify-center transition ${
-                  layout === opt.mode
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-400"
-                }`}
-              >
-                {opt.svg}
-              </button>
-            ))}
+          {/* ── CV Layout switcher — changes CV internal column structure ── */}
+          <div className="flex items-center gap-1">
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider hidden sm:block">Layout</span>
+            <div className="flex items-center gap-0.5 p-1 border border-slate-200 dark:border-slate-600 rounded-lg" title="CV Column Layout">
+              {CV_LAYOUTS.map(opt => (
+                <button
+                  key={opt.id}
+                  title={opt.label}
+                  onClick={() => updateCvField("cvLayout", opt.id)}
+                  className={`w-8 h-7 rounded flex items-center justify-center transition ${
+                    cvData.cvLayout === opt.id
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-400"
+                  }`}
+                >
+                  {opt.svg}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Mobile preview toggle */}
@@ -324,11 +317,10 @@ function CVBuilderInner() {
           </div>
         )}
 
-        {/* ── Editor area — fills remaining height ── */}
-        <div className={`flex-1 min-h-0 ${LC.container}`}>
-
+        {/* ── Editor area — always split left/right ── */}
+        <div className="flex-1 min-h-0 flex flex-row">
           {/* Form panel */}
-          <div className={`${LC.form} ${showMobilePreview ? "hidden sm:flex" : "flex"} flex-col overflow-y-auto bg-slate-50 dark:bg-slate-900`}>
+          <div className={`w-1/2 flex flex-col overflow-y-auto border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 ${showMobilePreview ? "hidden sm:flex" : "flex"}`}>
             <CVForm
               cvData={cvData}
               onChange={setCvData}
@@ -338,9 +330,8 @@ function CVBuilderInner() {
               aiLoading={aiLoading}
             />
           </div>
-
           {/* Preview panel */}
-          <div className={`${LC.preview} ${!showMobilePreview && layout !== "preview" ? "hidden sm:flex" : "flex"} flex-col overflow-y-auto bg-slate-200 dark:bg-slate-800`}>
+          <div className={`w-1/2 flex flex-col overflow-y-auto bg-slate-200 dark:bg-slate-800 ${!showMobilePreview ? "hidden sm:flex" : "flex"}`}>
             <CVPreview
               htmlContent={liveHtml}
               cvData={cvData}
