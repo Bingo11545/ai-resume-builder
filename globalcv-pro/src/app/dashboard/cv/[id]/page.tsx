@@ -159,40 +159,41 @@ function CVBuilderInner() {
     setCvData((prev: any) => ({ ...prev, [field]: value }));
   };
 
-  // ── Layout definitions ──────────────────────────────────────────
-  // Each layout gives explicit flex direction + sizes for form and preview
-  const layouts: Record<LayoutMode, { label: string; icon: string; container: string; form: string; preview: string }> = {
-    "split-lr": {
-      label: "Form Left",
-      icon: "▪️◻️",
-      container: "flex-1 flex flex-row min-h-0",
-      form: "w-1/2 flex flex-col overflow-y-auto border-r border-slate-200 dark:border-slate-700",
-      preview: "w-1/2 flex flex-col overflow-y-auto",
+  // ── Workspace layout options (separate from CV template) ──────────
+  const LAYOUT_OPTIONS: { mode: LayoutMode; label: string; svg: React.ReactNode }[] = [
+    {
+      mode: "split-lr",
+      label: "Form Left, Preview Right",
+      svg: <svg width="18" height="13" viewBox="0 0 18 13"><rect x="0" y="0" width="8" height="13" fill="currentColor" opacity=".9" rx="1"/><rect x="10" y="0" width="8" height="13" fill="currentColor" opacity=".3" rx="1"/></svg>,
     },
-    "split-rl": {
-      label: "Preview Left",
-      icon: "◻️▪️",
-      container: "flex-1 flex flex-row-reverse min-h-0",
-      form: "w-1/2 flex flex-col overflow-y-auto border-l border-slate-200 dark:border-slate-700",
-      preview: "w-1/2 flex flex-col overflow-y-auto",
+    {
+      mode: "split-rl",
+      label: "Preview Left, Form Right",
+      svg: <svg width="18" height="13" viewBox="0 0 18 13"><rect x="0" y="0" width="8" height="13" fill="currentColor" opacity=".3" rx="1"/><rect x="10" y="0" width="8" height="13" fill="currentColor" opacity=".9" rx="1"/></svg>,
     },
-    "stacked": {
-      label: "Stacked",
-      icon: "⬆️",
-      container: "flex-1 flex flex-col min-h-0",
-      form: "h-[50%] flex flex-col overflow-y-auto border-b border-slate-200 dark:border-slate-700",
-      preview: "h-[50%] flex flex-col overflow-y-auto",
+    {
+      mode: "stacked",
+      label: "Form Top, Preview Bottom",
+      svg: <svg width="14" height="14" viewBox="0 0 14 14"><rect x="0" y="0" width="14" height="6" fill="currentColor" opacity=".9" rx="1"/><rect x="0" y="8" width="14" height="6" fill="currentColor" opacity=".3" rx="1"/></svg>,
     },
-    "preview": {
+    {
+      mode: "preview",
       label: "Preview Only",
-      icon: "🖥️",
-      container: "flex-1 flex flex-col min-h-0",
-      form: "hidden",
-      preview: "flex-1 flex flex-col overflow-y-auto",
+      svg: <svg width="18" height="13" viewBox="0 0 18 13"><rect x="0" y="0" width="18" height="13" fill="currentColor" opacity=".7" rx="1"/></svg>,
     },
+  ];
+
+  // ── Workspace container/panel classes based on layout mode ──────
+  const getLayoutClasses = (mode: LayoutMode) => {
+    switch (mode) {
+      case "split-lr":   return { container: "flex flex-row",         form: "w-1/2 border-r border-slate-200 dark:border-slate-700", preview: "w-1/2" };
+      case "split-rl":   return { container: "flex flex-row-reverse", form: "w-1/2 border-l border-slate-200 dark:border-slate-700", preview: "w-1/2" };
+      case "stacked":    return { container: "flex flex-col",         form: "h-[45%] border-b border-slate-200 dark:border-slate-700", preview: "flex-1" };
+      case "preview":    return { container: "flex flex-col",         form: "hidden", preview: "flex-1" };
+    }
   };
 
-  const L = layouts[layout];
+  const LC = getLayoutClasses(layout);
 
   return (
     <DashboardLayout>
@@ -251,23 +252,20 @@ function CVBuilderInner() {
 
           <div className="h-4 w-px bg-slate-200 dark:bg-slate-600 hidden sm:block" />
 
-          {/* ── Layout switcher — clickable icons ── */}
-          <div className="flex items-center gap-0.5 p-1 border border-slate-200 dark:border-slate-600 rounded-lg">
-            {(Object.entries(layouts) as [LayoutMode, typeof layouts[LayoutMode]][]).map(([key, l]) => (
+          {/* ── Layout switcher — 4 workspace arrangement buttons ── */}
+          <div className="flex items-center gap-0.5 p-1 border border-slate-200 dark:border-slate-600 rounded-lg" title="Workspace Layout">
+            {LAYOUT_OPTIONS.map(opt => (
               <button
-                key={key}
-                title={l.label}
-                onClick={() => setLayout(key)}
-                className={`w-8 h-7 rounded text-[10px] font-bold transition flex items-center justify-center ${
-                  layout === key
+                key={opt.mode}
+                title={opt.label}
+                onClick={() => setLayout(opt.mode)}
+                className={`w-8 h-7 rounded flex items-center justify-center transition ${
+                  layout === opt.mode
                     ? "bg-blue-600 text-white"
-                    : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-400"
                 }`}
               >
-                {key === "split-lr" && <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="7" height="12" fill="currentColor" opacity=".8" rx="1"/><rect x="9" y="0" width="7" height="12" fill="currentColor" opacity=".3" rx="1"/></svg>}
-                {key === "split-rl" && <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="7" height="12" fill="currentColor" opacity=".3" rx="1"/><rect x="9" y="0" width="7" height="12" fill="currentColor" opacity=".8" rx="1"/></svg>}
-                {key === "stacked" && <svg width="12" height="14" viewBox="0 0 12 14"><rect x="0" y="0" width="12" height="6" fill="currentColor" opacity=".8" rx="1"/><rect x="0" y="8" width="12" height="6" fill="currentColor" opacity=".3" rx="1"/></svg>}
-                {key === "preview" && <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="16" height="12" fill="currentColor" opacity=".6" rx="1"/></svg>}
+                {opt.svg}
               </button>
             ))}
           </div>
@@ -327,22 +325,22 @@ function CVBuilderInner() {
         )}
 
         {/* ── Editor area — fills remaining height ── */}
-        <div className={L.container}>
+        <div className={`flex-1 min-h-0 ${LC.container}`}>
 
           {/* Form panel */}
-          <div className={`${L.form} ${showMobilePreview ? "hidden sm:flex" : "flex"} bg-slate-50 dark:bg-slate-900`}>
+          <div className={`${LC.form} ${showMobilePreview ? "hidden sm:flex" : "flex"} flex-col overflow-y-auto bg-slate-50 dark:bg-slate-900`}>
             <CVForm
               cvData={cvData}
               onChange={setCvData}
               activeSection={activeSection}
               setActiveSection={setActiveSection}
-              onGeneratePreview={() => {}} // live preview auto-updates
+              onGeneratePreview={() => {}}
               aiLoading={aiLoading}
             />
           </div>
 
           {/* Preview panel */}
-          <div className={`${L.preview} ${!showMobilePreview && layout !== "preview" ? "hidden sm:flex" : "flex"} bg-slate-200 dark:bg-slate-800`}>
+          <div className={`${LC.preview} ${!showMobilePreview && layout !== "preview" ? "hidden sm:flex" : "flex"} flex-col overflow-y-auto bg-slate-200 dark:bg-slate-800`}>
             <CVPreview
               htmlContent={liveHtml}
               cvData={cvData}
