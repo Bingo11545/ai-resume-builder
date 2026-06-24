@@ -1,3 +1,5 @@
+"use client";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -28,6 +30,8 @@ const FAQS = [
 ];
 
 export default function LandingPage() {
+  const { data: session } = useSession();
+  const ctaHref = session ? "/dashboard/cv/new" : "/register";
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -48,7 +52,7 @@ export default function LandingPage() {
             AI-powered CV builder designed for Ethiopian students, graduates, and international job seekers. ATS-optimized. Recruiter-approved.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register" className="inline-flex items-center justify-center gap-2 bg-white text-blue-900 font-bold px-8 py-4 rounded-full text-base hover:bg-blue-50 transition shadow-xl shadow-blue-900/30">
+            <Link href={ctaHref} className="inline-flex items-center justify-center gap-2 bg-white text-blue-900 font-bold px-8 py-4 rounded-full text-base hover:bg-blue-50 transition shadow-xl shadow-blue-900/30">
               Build My CV Free <FiArrowRight />
             </Link>
             <Link href="#templates" className="inline-flex items-center justify-center gap-2 bg-blue-600/40 border border-blue-400/40 text-white font-bold px-8 py-4 rounded-full text-base hover:bg-blue-600/60 transition backdrop-blur-sm">
@@ -159,14 +163,14 @@ export default function LandingPage() {
               <h3 className="font-black text-xl mb-1">Ethiopia</h3>
               <div className="text-4xl font-black text-blue-300 my-4">300 ETB</div>
               <p className="text-blue-200 text-sm mb-6">Pay via CBE, Telebirr, or Awash Bank</p>
-              <Link href="/register" className="block bg-white text-blue-900 font-bold py-3 rounded-full hover:bg-blue-50 transition">Get Started</Link>
+              <Link href={ctaHref} className="block bg-white text-blue-900 font-bold py-3 rounded-full hover:bg-blue-50 transition">Get Started</Link>
             </div>
             <div className="bg-white text-blue-900 rounded-2xl p-8 shadow-2xl shadow-blue-900/50">
               <div className="text-4xl mb-2">🌍</div>
               <h3 className="font-black text-xl mb-1">International</h3>
               <div className="text-4xl font-black text-blue-700 my-4">$5 USD</div>
               <p className="text-slate-500 text-sm mb-6">Pay via PayPal or Wise</p>
-              <Link href="/register" className="block bg-blue-700 text-white font-bold py-3 rounded-full hover:bg-blue-800 transition">Get Started</Link>
+              <Link href={ctaHref} className="block bg-blue-700 text-white font-bold py-3 rounded-full hover:bg-blue-800 transition">Get Started</Link>
             </div>
           </div>
         </div>
@@ -217,7 +221,7 @@ export default function LandingPage() {
         <div className="max-w-2xl mx-auto px-4">
           <h2 className="text-3xl sm:text-4xl font-black mb-4">Ready to Land Your Dream Job?</h2>
           <p className="text-blue-200 mb-8">Join thousands of professionals who got hired with GlobalCV Pro.</p>
-          <Link href="/register" className="inline-flex items-center gap-2 bg-white text-blue-900 font-bold px-10 py-4 rounded-full text-base hover:bg-blue-50 transition shadow-xl">
+          <Link href={ctaHref} className="inline-flex items-center gap-2 bg-white text-blue-900 font-bold px-10 py-4 rounded-full text-base hover:bg-blue-50 transition shadow-xl">
             Build My CV Now <FiArrowRight />
           </Link>
         </div>

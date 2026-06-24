@@ -8,11 +8,12 @@ import CVPreview from "@/components/CVPreview";
 import { FiSave, FiEye, FiEyeOff, FiSend, FiLoader } from "react-icons/fi";
 import { IoSparkles } from "react-icons/io5";
 import toast, { Toaster } from "react-hot-toast";
-import { TEMPLATES } from "@/lib/config";
+import { TEMPLATES, COLOR_PRESETS } from "@/lib/config";
 
 const DEFAULT_CV = {
   title: "My Professional CV",
   templateId: "modern",
+  accentColor: "#1e40af",
   personalInfo: { name: "", title: "", phone: "", email: "", city: "", country: "", linkedin: "", github: "", portfolio: "", dob: "", nationality: "", photo: "" },
   summary: { objective: "", summary: "", yearsOfExperience: "", targetRole: "" },
   education: [],
@@ -50,6 +51,7 @@ export default function CVBuilderPage() {
           setCvData({
             title: data.title,
             templateId: data.templateId,
+            accentColor: data.accentColor || "#1e40af",
             personalInfo: JSON.parse(data.personalInfo || "{}"),
             summary: JSON.parse(data.summary || "{}"),
             education: JSON.parse(data.education || "[]"),
@@ -163,6 +165,14 @@ export default function CVBuilderPage() {
               className="text-xs border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1.5 bg-white dark:bg-slate-800 hidden sm:block">
               {TEMPLATES.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
+            {/* Color picker swatches */}
+            <div className="hidden sm:flex items-center gap-1 border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1">
+              {COLOR_PRESETS.map(c => (
+                <button key={c.hex} title={c.name} onClick={() => setCvData((p: any) => ({ ...p, accentColor: c.hex }))}
+                  style={{ backgroundColor: c.hex }}
+                  className={`w-4 h-4 rounded-full transition-transform hover:scale-125 ${cvData.accentColor === c.hex ? "ring-2 ring-offset-1 ring-slate-400 scale-125" : ""}`} />
+              ))}
+            </div>
             <button onClick={() => setShowPreview(!showPreview)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition">
               {showPreview ? <FiEyeOff size={12} /> : <FiEye size={12} />}

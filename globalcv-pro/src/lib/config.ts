@@ -25,3 +25,16 @@ export const PAYMENT_METHODS = {
     { name: "Wise (TransferWise)", account: "hailetadilo@gmail.com", note: "USD transfer" },
   ],
 };
+
+export const COLOR_PRESETS = [
+  { name: "Navy Blue",   hex: "#1e40af" },
+  { name: "Royal Blue",  hex: "#1d4ed8" },
+  { name: "Teal",        hex: "#0f766e" },
+  { name: "Emerald",     hex: "#059669" },
+  { name: "Indigo",      hex: "#4f46e5" },
+  { name: "Violet",      hex: "#7c3aed" },
+  { name: "Rose",        hex: "#e11d48" },
+  { name: "Orange",      hex: "#ea580c" },
+  { name: "Charcoal",    hex: "#334155" },
+  { name: "Black",       hex: "#0f172a" },
+];
