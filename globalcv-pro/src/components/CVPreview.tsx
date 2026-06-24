@@ -1,7 +1,6 @@
 "use client";
 import { useRef } from "react";
 import { FiDownload, FiLoader, FiLock, FiEye } from "react-icons/fi";
-import { generateCVHtml } from "@/lib/templates";
 
 interface CVPreviewProps {
   htmlContent: string;
@@ -13,7 +12,8 @@ interface CVPreviewProps {
 
 export default function CVPreview({ htmlContent, cvData, templateId, isApproved = false, cvId }: CVPreviewProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const content = htmlContent || generateCVHtml({ ...cvData, templateId });
+  // Always use passed htmlContent (live-generated from parent)
+  const content = htmlContent;
 
   const handlePrint = () => {
     if (!isApproved) return;

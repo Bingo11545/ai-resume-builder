@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { FiCheckCircle, FiStar, FiArrowRight, FiUsers, FiFileText, FiGlobe } from "react-icons/fi";
 
+import TemplateGallery from "@/components/TemplateGallery";
+
 const FEATURES = [
   { icon: "🎯", title: "ATS Optimized", desc: "Beat applicant tracking systems with keyword-rich, properly formatted CVs." },
   { icon: "🌍", title: "International Standard", desc: "Formats accepted by employers in Ethiopia, Europe, USA, Canada, and beyond." },
@@ -105,29 +107,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Templates */}
-      <section id="templates" className="py-20 bg-slate-50 dark:bg-slate-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mb-4">7 Professional CV Templates</h2>
-            <p className="text-slate-500">Choose the template that matches your industry and career level.</p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {["Modern Professional", "ATS Friendly", "Minimalist", "Corporate", "Tech Resume", "Creative Pro", "International CV"].map((t, i) => (
-              <div key={i} className="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 text-center hover:border-blue-400 hover:shadow-md transition cursor-pointer">
-                <div className="aspect-[210/297] bg-gradient-to-b from-blue-50 to-slate-100 dark:from-blue-900/20 dark:to-slate-700 rounded-lg mb-3 flex items-center justify-center">
-                  <FiFileText className="text-blue-400 text-2xl" />
-                </div>
-                <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{t}</p>
-              </div>
-            ))}
-            <div className="rounded-xl bg-blue-600 p-4 text-center flex flex-col items-center justify-center cursor-pointer hover:bg-blue-700 transition">
-              <FiArrowRight className="text-white text-2xl mb-2" />
-              <p className="text-xs font-bold text-white">Start Building</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Templates — replaced with interactive TemplateGallery */}
+      <TemplateGallery />
 
       {/* How it works */}
       <section className="py-20 bg-white dark:bg-slate-950">

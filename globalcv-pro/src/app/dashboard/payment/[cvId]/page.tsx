@@ -1,21 +1,23 @@
 "use client";
 import { useSession, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import DashboardLayout from "@/components/DashboardLayout";
 import { FiUpload, FiCheckCircle, FiClock, FiXCircle, FiLoader } from "react-icons/fi";
 import toast, { Toaster } from "react-hot-toast";
-import { PAYMENT_METHODS, PRICING } from "@/lib/config";
+
+const ETH_METHODS = [
+  { name: "Commercial Bank of Ethiopia (CBE)", account: "1000338448396", holder: "Haileyesus Tadilo" },
+  { name: "Telebirr", account: "0935224855", holder: "Haileyesus Tadilo" },
+];
 
 export default function PaymentPage() {
   const { data: session, status } = useSession();
   const params = useParams();
-  const router = useRouter();
   const cvId = params.cvId as string;
 
   const [cv, setCv] = useState<any>(null);
   const [payment, setPayment] = useState<any>(null);
-  const [user, setUser] = useState<any>(null);
   const [screenshot, setScreenshot] = useState<File | null>(null);
   const [transactionId, setTransactionId] = useState("");
   const [paymentDate, setPaymentDate] = useState("");
@@ -28,7 +30,6 @@ export default function PaymentPage() {
       fetch(`/api/payments?cvId=${cvId}`).then(r => r.json()).then(data => {
         setCv(data.cv);
         setPayment(data.payment);
-        setUser(data.user);
       });
     }
   }, [status, cvId]);
@@ -54,8 +55,8 @@ export default function PaymentPage() {
       const res = await fetch("/api/payments/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (data.ok) {
-        setPayment(data.payment);
-        toast.success("Payment screenshot uploaded! Awaiting admin review.");
+        setPayment((prev: any) => ({ ...prev, status: "pending", screenshotUrl: "uploaded" }));
+        toast.success("Payment proof submitted! Awaiting admin review.");
       } else throw new Error(data.error);
     } catch (err: any) {
       toast.error(err.message || "Upload failed");
@@ -63,10 +64,6 @@ export default function PaymentPage() {
       setUploading(false);
     }
   };
-
-  const country = user?.country || "international";
-  const pricing = PRICING[country as keyof typeof PRICING] || PRICING.international;
-  const methods = PAYMENT_METHODS[country as keyof typeof PAYMENT_METHODS] || PAYMENT_METHODS.international;
 
   if (!cv) return (
     <DashboardLayout>
@@ -79,38 +76,44 @@ export default function PaymentPage() {
   return (
     <DashboardLayout>
       <Toaster position="top-right" />
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
-        <div className="mb-6">
+      <div className="max-w-xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+        
+        <div>
           <h1 className="text-2xl font-black text-slate-900 dark:text-white">Payment Instructions</h1>
           <p className="text-slate-500 text-sm mt-1">Complete payment to download your professional CV</p>
         </div>
 
-        {/* Payment Status */}
+        {/* Status */}
         {payment && (
-          <div className={`mb-6 p-4 rounded-xl border flex items-start gap-3 ${
+          <div className={`p-4 rounded-xl border flex items-start gap-3 ${
             payment.status === "approved" ? "bg-green-50 border-green-200" :
             payment.status === "rejected" ? "bg-red-50 border-red-200" :
             "bg-amber-50 border-amber-200"
           }`}>
-            {payment.status === "approved" ? <FiCheckCircle className="text-green-600 text-xl shrink-0 mt-0.5" /> :
-             payment.status === "rejected" ? <FiXCircle className="text-red-600 text-xl shrink-0 mt-0.5" /> :
-             <FiClock className="text-amber-600 text-xl shrink-0 mt-0.5 animate-pulse" />}
+            {payment.status === "approved"
+              ? <FiCheckCircle className="text-green-600 text-xl shrink-0 mt-0.5" />
+              : payment.status === "rejected"
+              ? <FiXCircle className="text-red-600 text-xl shrink-0 mt-0.5" />
+              : <FiClock className="text-amber-600 text-xl shrink-0 mt-0.5 animate-pulse" />}
             <div className="flex-1">
               <p className="font-bold text-sm">
-                {payment.status === "approved" ? "✅ Payment Approved — Your CV is ready to download!" :
-                 payment.status === "rejected" ? "❌ Payment Rejected" :
-                 payment.screenshotUrl ? "⏳ Screenshot received — Under admin review (max 24h)" :
-                 "⏳ Awaiting Payment Screenshot"}
+                {payment.status === "approved"
+                  ? "✅ Payment Approved — Your CV is ready!"
+                  : payment.status === "rejected"
+                  ? "❌ Payment Rejected"
+                  : payment.screenshotUrl
+                  ? "⏳ Screenshot received — Under admin review (max 24h)"
+                  : "⏳ Awaiting your payment proof"}
               </p>
               {payment.status === "rejected" && payment.rejectionReason && (
                 <p className="text-xs text-red-600 mt-1 bg-red-100 rounded p-2">Reason: {payment.rejectionReason}</p>
               )}
               {payment.status === "pending" && payment.screenshotUrl && (
-                <p className="text-xs text-amber-700 mt-1">Your payment proof has been submitted. We will verify and approve within 24 hours.</p>
+                <p className="text-xs text-amber-700 mt-1">We will verify and approve within 24 hours.</p>
               )}
               {payment.status === "approved" && (
                 <a href={`/api/cvs/${cvId}/download`} target="_blank"
-                  className="inline-flex items-center gap-1.5 mt-3 bg-green-600 text-white text-xs font-bold px-5 py-2.5 rounded-lg hover:bg-green-700 transition shadow-md">
+                  className="inline-flex items-center gap-2 mt-3 bg-green-600 text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:bg-green-700 transition shadow">
                   ⬇️ Download PDF CV
                 </a>
               )}
@@ -118,86 +121,66 @@ export default function PaymentPage() {
           </div>
         )}
 
-        {/* Amount */}
-        <div className="bg-blue-700 text-white rounded-2xl p-6 mb-6">
-          <p className="text-blue-200 text-sm mb-1">Amount to Pay</p>
-          <div className="flex items-end gap-3">
-            <p className="text-4xl font-black">{pricing.label}</p>
-            {country === "ethiopia" && <p className="text-blue-300 text-sm mb-1">≈ $5 USD</p>}
-          </div>
-          <p className="text-blue-200 text-xs mt-1">One-time payment • No subscription • Download forever</p>
-        </div>
-
-        {/* Payment Methods */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 mb-6">
-          <h2 className="font-bold text-slate-900 dark:text-white mb-4">Payment Methods</h2>
-          <div className="space-y-3">
-            {methods.map((m: any, i: number) => (
-              <div key={i} className="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
-                <p className="font-bold text-sm text-slate-900 dark:text-white mb-2">{m.name}</p>
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between bg-white dark:bg-slate-800 rounded-lg px-3 py-2 border border-slate-200 dark:border-slate-600">
-                    <div>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wider">Account Number</p>
-                      <p className="text-blue-700 dark:text-blue-400 font-mono font-bold text-base tracking-widest">{m.account}</p>
-                    </div>
-                    <button onClick={() => { navigator.clipboard.writeText(m.account); toast.success("Copied!"); }}
-                      className="text-xs text-slate-400 hover:text-blue-600 transition px-2 py-1 rounded border border-slate-200 hover:border-blue-300">
-                      Copy
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between bg-white dark:bg-slate-800 rounded-lg px-3 py-2 border border-slate-200 dark:border-slate-600">
-                    <div>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wider">Account Holder</p>
-                      <p className="text-slate-800 dark:text-slate-200 font-semibold text-sm">{m.holder || "GlobalCV Pro"}</p>
-                    </div>
-                  </div>
-                  {m.note && <p className="text-xs text-slate-400 px-1">{m.note}</p>}
+        {/* Payment Methods — CBE & Telebirr only */}
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-4">
+          <h2 className="font-bold text-slate-900 dark:text-white">Payment Methods</h2>
+          {ETH_METHODS.map((m, i) => (
+            <div key={i} className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-200 dark:border-slate-600 space-y-2">
+              <p className="font-bold text-sm text-slate-900 dark:text-white">{m.name}</p>
+              <div className="flex items-center justify-between bg-white dark:bg-slate-800 rounded-lg px-3 py-2.5 border border-slate-200 dark:border-slate-600">
+                <div>
+                  <p className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Account Number</p>
+                  <p className="text-blue-700 dark:text-blue-400 font-mono font-black text-xl tracking-widest mt-0.5">{m.account}</p>
                 </div>
+                <button onClick={() => { navigator.clipboard.writeText(m.account); toast.success("Copied!"); }}
+                  className="text-xs font-semibold text-slate-500 hover:text-blue-600 border border-slate-200 hover:border-blue-300 px-3 py-1.5 rounded-lg transition">
+                  Copy
+                </button>
               </div>
-            ))}
-          </div>
-          <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
-            <strong>⚠️ Important:</strong> After paying, take a screenshot of the confirmation and upload it below. Include the transaction reference number.
+              <div className="bg-white dark:bg-slate-800 rounded-lg px-3 py-2 border border-slate-200 dark:border-slate-600">
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Account Holder</p>
+                <p className="text-slate-800 dark:text-slate-200 font-semibold text-sm mt-0.5">{m.holder}</p>
+              </div>
+            </div>
+          ))}
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800">
+            <strong>⚠️ Important:</strong> After paying, take a screenshot of the confirmation and upload it below with the transaction reference number.
           </div>
         </div>
 
-        {/* Upload screenshot */}
+        {/* Upload form */}
         {(!payment || payment.status === "rejected" || (payment.status === "pending" && !payment.screenshotUrl)) && (
-          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
-            <h2 className="font-bold text-slate-900 dark:text-white mb-4">Upload Payment Proof</h2>
-            <div className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Transaction ID / Reference</label>
-                <input value={transactionId} onChange={e => setTransactionId(e.target.value)}
-                  placeholder="e.g. TXN123456789"
-                  className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 focus:border-blue-500 outline-none" />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Payment Date</label>
-                <input type="date" value={paymentDate} onChange={e => setPaymentDate(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 focus:border-blue-500 outline-none" />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Payment Screenshot</label>
-                <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-slate-200 dark:border-slate-600 rounded-xl cursor-pointer hover:border-blue-400 transition bg-slate-50 dark:bg-slate-700/50">
-                  {preview ? (
-                    <img src={preview} alt="Screenshot preview" className="h-full w-full object-contain rounded-xl p-1" />
-                  ) : (
-                    <div className="text-center">
-                      <FiUpload className="mx-auto text-2xl text-slate-400 mb-2" />
-                      <p className="text-sm text-slate-500">Click to upload screenshot</p>
-                      <p className="text-xs text-slate-400">PNG, JPG, WEBP up to 5MB</p>
-                    </div>
-                  )}
-                  <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                </label>
-              </div>
-              <button onClick={handleUpload} disabled={uploading}
-                className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 rounded-xl transition disabled:opacity-50 flex items-center justify-center gap-2">
-                {uploading ? <><FiLoader className="animate-spin" /> Uploading...</> : <><FiUpload /> Submit Payment Proof</>}
-              </button>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-4">
+            <h2 className="font-bold text-slate-900 dark:text-white">Upload Payment Proof</h2>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Transaction ID / Reference</label>
+              <input value={transactionId} onChange={e => setTransactionId(e.target.value)} placeholder="e.g. CBE123456789"
+                className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 focus:border-blue-500 outline-none" />
             </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Payment Date</label>
+              <input type="date" value={paymentDate} onChange={e => setPaymentDate(e.target.value)}
+                className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-white dark:bg-slate-700 focus:border-blue-500 outline-none" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Payment Screenshot</label>
+              <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-slate-200 dark:border-slate-600 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition bg-slate-50 dark:bg-slate-700/30">
+                {preview ? (
+                  <img src={preview} alt="preview" className="h-full w-full object-contain rounded-xl p-1" />
+                ) : (
+                  <div className="text-center">
+                    <FiUpload className="mx-auto text-3xl text-slate-400 mb-2" />
+                    <p className="text-sm font-semibold text-slate-500">Click to upload screenshot</p>
+                    <p className="text-xs text-slate-400 mt-1">PNG, JPG, WEBP up to 5MB</p>
+                  </div>
+                )}
+                <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+              </label>
+            </div>
+            <button onClick={handleUpload} disabled={uploading}
+              className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3.5 rounded-xl transition disabled:opacity-50 flex items-center justify-center gap-2 text-sm">
+              {uploading ? <><FiLoader className="animate-spin" /> Uploading...</> : <><FiUpload /> Submit Payment Proof</>}
+            </button>
           </div>
         )}
       </div>
