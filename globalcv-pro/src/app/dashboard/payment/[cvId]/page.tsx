@@ -87,26 +87,31 @@ export default function PaymentPage() {
 
         {/* Payment Status */}
         {payment && (
-          <div className={`mb-6 p-4 rounded-xl border flex items-center gap-3 ${
+          <div className={`mb-6 p-4 rounded-xl border flex items-start gap-3 ${
             payment.status === "approved" ? "bg-green-50 border-green-200" :
             payment.status === "rejected" ? "bg-red-50 border-red-200" :
             "bg-amber-50 border-amber-200"
           }`}>
-            {payment.status === "approved" ? <FiCheckCircle className="text-green-600 text-xl shrink-0" /> :
-             payment.status === "rejected" ? <FiXCircle className="text-red-600 text-xl shrink-0" /> :
-             <FiClock className="text-amber-600 text-xl shrink-0 animate-pulse" />}
-            <div>
+            {payment.status === "approved" ? <FiCheckCircle className="text-green-600 text-xl shrink-0 mt-0.5" /> :
+             payment.status === "rejected" ? <FiXCircle className="text-red-600 text-xl shrink-0 mt-0.5" /> :
+             <FiClock className="text-amber-600 text-xl shrink-0 mt-0.5 animate-pulse" />}
+            <div className="flex-1">
               <p className="font-bold text-sm">
-                {payment.status === "approved" ? "Payment Approved! Your CV is ready." :
-                 payment.status === "rejected" ? "Payment Rejected" :
-                 "Payment Under Review (24h max)"}
+                {payment.status === "approved" ? "✅ Payment Approved — Your CV is ready to download!" :
+                 payment.status === "rejected" ? "❌ Payment Rejected" :
+                 payment.screenshotUrl ? "⏳ Screenshot received — Under admin review (max 24h)" :
+                 "⏳ Awaiting Payment Screenshot"}
               </p>
               {payment.status === "rejected" && payment.rejectionReason && (
-                <p className="text-xs text-red-600 mt-0.5">Reason: {payment.rejectionReason}</p>
+                <p className="text-xs text-red-600 mt-1 bg-red-100 rounded p-2">Reason: {payment.rejectionReason}</p>
+              )}
+              {payment.status === "pending" && payment.screenshotUrl && (
+                <p className="text-xs text-amber-700 mt-1">Your payment proof has been submitted. We will verify and approve within 24 hours.</p>
               )}
               {payment.status === "approved" && (
-                <a href={`/api/cvs/${cvId}/download`} className="inline-flex items-center gap-1.5 mt-2 bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                  Download PDF CV
+                <a href={`/api/cvs/${cvId}/download`} target="_blank"
+                  className="inline-flex items-center gap-1.5 mt-3 bg-green-600 text-white text-xs font-bold px-5 py-2.5 rounded-lg hover:bg-green-700 transition shadow-md">
+                  ⬇️ Download PDF CV
                 </a>
               )}
             </div>
@@ -116,8 +121,11 @@ export default function PaymentPage() {
         {/* Amount */}
         <div className="bg-blue-700 text-white rounded-2xl p-6 mb-6">
           <p className="text-blue-200 text-sm mb-1">Amount to Pay</p>
-          <p className="text-4xl font-black">{pricing.label}</p>
-          <p className="text-blue-200 text-xs mt-1">One-time payment • No subscription</p>
+          <div className="flex items-end gap-3">
+            <p className="text-4xl font-black">{pricing.label}</p>
+            {country === "ethiopia" && <p className="text-blue-300 text-sm mb-1">≈ $5 USD</p>}
+          </div>
+          <p className="text-blue-200 text-xs mt-1">One-time payment • No subscription • Download forever</p>
         </div>
 
         {/* Payment Methods */}
@@ -155,7 +163,7 @@ export default function PaymentPage() {
         </div>
 
         {/* Upload screenshot */}
-        {(!payment || payment.status === "rejected") && (
+        {(!payment || payment.status === "rejected" || (payment.status === "pending" && !payment.screenshotUrl)) && (
           <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
             <h2 className="font-bold text-slate-900 dark:text-white mb-4">Upload Payment Proof</h2>
             <div className="space-y-4">

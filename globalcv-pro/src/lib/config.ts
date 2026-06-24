@@ -21,6 +21,8 @@ export const PAYMENT_METHODS = {
     { name: "Telebirr", account: "0935224855", holder: "Haileyesus Tadilo" },
   ],
   international: [
+    { name: "Commercial Bank of Ethiopia (CBE)", account: "1000338448396", holder: "Haileyesus Tadilo" },
+    { name: "Telebirr", account: "0935224855", holder: "Haileyesus Tadilo" },
     { name: "PayPal", account: "hailetadilo@gmail.com", note: "Send as Friends & Family" },
     { name: "Wise (TransferWise)", account: "hailetadilo@gmail.com", note: "USD transfer" },
   ],
