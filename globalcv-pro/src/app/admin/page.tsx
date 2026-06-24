@@ -161,12 +161,12 @@ export default function AdminPage() {
                         }`}>{p.status}</span>
                       </td>
                       <td className="px-4 py-3">
-                        {p.screenshotUrl ? (
-                          <a href={p.screenshotUrl} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-blue-600 text-xs hover:underline">
-                            <FiEye size={11} /> View
+                        {p.hasScreenshot ? (
+                          <a href={`/api/admin/screenshot?paymentId=${p.id}`} target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-blue-600 text-xs hover:underline font-semibold">
+                            <FiEye size={11} /> View Proof
                           </a>
-                        ) : <span className="text-slate-300 text-xs">—</span>}
+                        ) : <span className="text-slate-300 text-xs">Not uploaded</span>}
                       </td>
                       <td className="px-4 py-3">
                         {p.status === "pending" && (

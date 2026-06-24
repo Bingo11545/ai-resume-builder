@@ -13,7 +13,15 @@ export async function GET() {
     include: { user: true, cv: true },
     orderBy: { createdAt: "desc" },
   });
-  return NextResponse.json(payments);
+
+  // Strip base64 data from list response — use hasScreenshot flag instead
+  const sanitized = payments.map(p => ({
+    ...p,
+    hasScreenshot: !!p.screenshotUrl,
+    screenshotUrl: p.screenshotUrl ? `/api/admin/screenshot?paymentId=${p.id}` : null,
+  }));
+
+  return NextResponse.json(sanitized);
 }
 
 export async function PUT(req: Request) {
