@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { FiChevronDown, FiChevronUp, FiPlus, FiTrash2, FiEye } from "react-icons/fi";
+import { useState, useRef } from "react";
+import { FiChevronDown, FiChevronUp, FiPlus, FiTrash2, FiEye, FiCamera, FiX } from "react-icons/fi";
 import { IoSparkles } from "react-icons/io5";
 
 interface CVFormProps {
@@ -97,8 +97,53 @@ export default function CVForm({ cvData, onChange, activeSection, setActiveSecti
           <Field label="Portfolio Website"><input className={inputCls} value={p.portfolio || ""} onChange={e => update("personalInfo.portfolio", e.target.value)} placeholder="yourwebsite.com" /></Field>
           <Field label="Date of Birth (optional)"><input className={inputCls} value={p.dob || ""} onChange={e => update("personalInfo.dob", e.target.value)} placeholder="DD/MM/YYYY" /></Field>
           <Field label="Nationality (optional)"><input className={inputCls} value={p.nationality || ""} onChange={e => update("personalInfo.nationality", e.target.value)} placeholder="Ethiopian" /></Field>
-          <Field label="Profile Photo URL"><input className={inputCls} value={p.photo || ""} onChange={e => update("personalInfo.photo", e.target.value)} placeholder="https://..." /></Field>
         </div>
+
+        {/* Photo Upload */}
+        <Field label="Profile Photo">
+          <div className="flex items-start gap-4">
+            {/* Preview */}
+            <div className="relative shrink-0">
+              {p.photo ? (
+                <div className="relative w-20 h-20">
+                  <img src={p.photo} alt="Profile" className="w-20 h-20 rounded-full object-cover border-2 border-blue-400 shadow" />
+                  <button type="button" onClick={() => update("personalInfo.photo", "")}
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition">
+                    <FiX size={10} />
+                  </button>
+                </div>
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-700 border-2 border-dashed border-slate-300 dark:border-slate-500 flex items-center justify-center">
+                  <FiCamera size={22} className="text-slate-400" />
+                </div>
+              )}
+            </div>
+
+            {/* Upload area */}
+            <div className="flex-1 space-y-2">
+              <label className="flex flex-col items-center justify-center w-full h-20 border-2 border-dashed border-slate-200 dark:border-slate-600 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition bg-slate-50 dark:bg-slate-700/30">
+                <FiCamera size={18} className="text-slate-400 mb-1" />
+                <span className="text-xs text-slate-500 font-medium">Click to upload photo</span>
+                <span className="text-[10px] text-slate-400">JPG, PNG up to 2MB</span>
+                <input type="file" accept="image/*" className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    if (file.size > 2 * 1024 * 1024) { alert("Photo must be under 2MB"); return; }
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                      update("personalInfo.photo", ev.target?.result as string);
+                    };
+                    reader.readAsDataURL(file);
+                  }}
+                />
+              </label>
+              <p className="text-[10px] text-slate-400 leading-relaxed">
+                Photo will appear in Modern, Creative, and International templates. Use a professional headshot.
+              </p>
+            </div>
+          </div>
+        </Field>
       </Section>
 
       {/* ── PROFESSIONAL SUMMARY ── */}
