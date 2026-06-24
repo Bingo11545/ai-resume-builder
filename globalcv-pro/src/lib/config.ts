@@ -17,12 +17,11 @@ export const TEMPLATES = [
 
 export const PAYMENT_METHODS = {
   ethiopia: [
-    { name: "Commercial Bank of Ethiopia (CBE)", account: "1000123456789", holder: "GlobalCV Pro" },
-    { name: "Telebirr", account: "+251912345678", holder: "GlobalCV Pro" },
-    { name: "Awash Bank", account: "0123456789012", holder: "GlobalCV Pro" },
+    { name: "Commercial Bank of Ethiopia (CBE)", account: "1000338448396", holder: "Haileyesus Tadilo" },
+    { name: "Telebirr", account: "1000338448396", holder: "Haileyesus Tadilo" },
   ],
   international: [
-    { name: "PayPal", account: "pay@globalcvpro.com", note: "Send as Friends & Family" },
-    { name: "Wise (TransferWise)", account: "globalcvpro@wise.com", note: "USD transfer" },
+    { name: "PayPal", account: "hailetadilo@gmail.com", note: "Send as Friends & Family" },
+    { name: "Wise (TransferWise)", account: "hailetadilo@gmail.com", note: "USD transfer" },
   ],
 };

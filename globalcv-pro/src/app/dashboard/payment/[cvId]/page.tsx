@@ -125,13 +125,32 @@ export default function PaymentPage() {
           <h2 className="font-bold text-slate-900 dark:text-white mb-4">Payment Methods</h2>
           <div className="space-y-3">
             {methods.map((m: any, i: number) => (
-              <div key={i} className="bg-slate-50 dark:bg-slate-700 rounded-xl p-4">
-                <p className="font-bold text-sm text-slate-900 dark:text-white">{m.name}</p>
-                <p className="text-blue-600 font-mono text-sm mt-0.5">{m.account}</p>
-                <p className="text-xs text-slate-500 mt-0.5">Account holder: {m.holder || "GlobalCV Pro"}</p>
-                {m.note && <p className="text-xs text-slate-400 mt-0.5">{m.note}</p>}
+              <div key={i} className="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                <p className="font-bold text-sm text-slate-900 dark:text-white mb-2">{m.name}</p>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between bg-white dark:bg-slate-800 rounded-lg px-3 py-2 border border-slate-200 dark:border-slate-600">
+                    <div>
+                      <p className="text-[10px] text-slate-400 uppercase tracking-wider">Account Number</p>
+                      <p className="text-blue-700 dark:text-blue-400 font-mono font-bold text-base tracking-widest">{m.account}</p>
+                    </div>
+                    <button onClick={() => { navigator.clipboard.writeText(m.account); toast.success("Copied!"); }}
+                      className="text-xs text-slate-400 hover:text-blue-600 transition px-2 py-1 rounded border border-slate-200 hover:border-blue-300">
+                      Copy
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white dark:bg-slate-800 rounded-lg px-3 py-2 border border-slate-200 dark:border-slate-600">
+                    <div>
+                      <p className="text-[10px] text-slate-400 uppercase tracking-wider">Account Holder</p>
+                      <p className="text-slate-800 dark:text-slate-200 font-semibold text-sm">{m.holder || "GlobalCV Pro"}</p>
+                    </div>
+                  </div>
+                  {m.note && <p className="text-xs text-slate-400 px-1">{m.note}</p>}
+                </div>
               </div>
             ))}
+          </div>
+          <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
+            <strong>⚠️ Important:</strong> After paying, take a screenshot of the confirmation and upload it below. Include the transaction reference number.
           </div>
         </div>
 
